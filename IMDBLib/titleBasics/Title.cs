@@ -1,4 +1,4 @@
-﻿namespace IMDBLib.models
+﻿namespace IMDBLib.titleBasics
 {
     public class Title
     {

@@ -1,4 +1,4 @@
-﻿using IMDBLib.models;
+﻿using IMDBLib.titleBasics;
 using System.Data.SqlClient;
 
 namespace IMDBConsole
@@ -114,8 +114,8 @@ namespace IMDBConsole
             foreach (TitleGenre titleGenre in titlesGenres)
             {
                 SqlCommand sqlCommand = new("INSERT INTO [dbo].[TitlesGenres]" +
-                                       "([tconst],[genreName])VALUES " +
-                                       $"('{titleGenre.tconst}',{v.CheckStringForNull(titleGenre.genreName)})", sqlConn);
+                    "([tconst],[genreName])VALUES " +
+                    $"('{titleGenre.tconst}',{v.CheckStringForNull(titleGenre.genreName)})", sqlConn);
 
                 try
                 {

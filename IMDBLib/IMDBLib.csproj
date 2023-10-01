@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="nameBasics\" />
+    <Folder Include="titleAkas\" />
+    <Folder Include="titlePrincipals\" />
+    <Folder Include="titleCrew\" />
+  </ItemGroup>
+
 </Project>
