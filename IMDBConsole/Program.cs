@@ -1,47 +1,25 @@
-﻿using IMDBConsole;
+﻿using IMDBLib.models;
 
-List<Title> titles = new List<Title>();
-
-foreach (
-    string line in System.IO.File.ReadLines (
-        @"C:\Users\mikke\Desktop\Database\title.basics.tsv\data.tsv").Skip(1).Take(1000))
+namespace IMDBConsole
 {
-    string[] values = line.Split("\t");
-    
-    if (values.Length == 9 )
+    public static class Program
     {
-        titles.Add(new Title(
-            values[0], values[1], values[2], values[3],
-            ConvertToBool(values[4]), ConvertToInt(values[5]),
-            ConvertToInt(values[6]), ConvertToInt(values[7])
-            ));
-    }
-}
+        // TODO: Connectionstring should be hidden from public repo.
+        private static readonly string connString = "server=localhost; database=MyIMDB;" +
+            "user id=sa; password=bibliotek; TrustServerCertificate=True";
+        private static readonly string tsvPathLapTop = @"C:\Users\mikke\Desktop\Database\title.basics.tsv\data.tsv";
+        private static readonly string tsvPathDesktop = @"C:\Users\mikke\Desktop\title.basics.tsv\data.tsv";
 
-Console.WriteLine(titles.Count);
+        private static void Main(string[] args)
+        {
+            RunTitleInserter(1000, tsvPathDesktop);
+        }
 
-NormalInserter myInserter = new NormalInserter();
-myInserter.InsertData(titles);
+        private static void RunTitleInserter(int lineAmount, string path)
+        {
+            TitleInserter titleInserter = new();
+            titleInserter.TitleData(path, connString, lineAmount);
+        }
 
-bool ConvertToBool(string input)
-{
-    if (input == "0")
-    {
-        return false;
-    } else
-    {
-        return true;
-    }
-    throw new ArgumentException("Ikke 0 eller 1: " + input);
-}
-
-int? ConvertToInt(string input)
-{
-    if (input.ToLower() == @"\n")
-    {
-        return null;
-    } else
-    {
-        return int.Parse(input);
     }
 }
