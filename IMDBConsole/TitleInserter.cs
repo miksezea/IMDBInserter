@@ -28,11 +28,13 @@ namespace IMDBConsole
 
                 if (values.Length == 9)
                 {
+                    // Titles table
                     titles.Add(new Title(values[0], values[1], values[2], values[3],
                         v.ConvertToBool(values[4]), v.ConvertToInt(values[5]),
                         v.ConvertToInt(values[6]), v.ConvertToInt(values[7])
                         ));
 
+                    // Genres table
                     if (values[8] != @"\N")
                     {
                         string[] genreNames = values[8].Split(",");
@@ -48,6 +50,7 @@ namespace IMDBConsole
                         }
                     }
 
+                    // TitlesGenres table
                     string[] genreForTitle = values[8].Split(",");
 
                     foreach (string genreName in genreForTitle)
