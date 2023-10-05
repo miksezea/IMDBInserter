@@ -1,9 +1,9 @@
 ﻿using IMDBLib.titleBasics;
 using System.Data.SqlClient;
 
-namespace IMDBConsole
+namespace IMDBConsole.TitleInserter
 {
-    public class TitleInserter
+    public class InsertersProcessor
     {
         readonly ValuesProcessor v = new();
         public void TitleData(string path, string connString, int lineAmount)
@@ -80,7 +80,8 @@ namespace IMDBConsole
                 try
                 {
                     sqlCommand.ExecuteNonQuery();
-                } catch (Exception)
+                }
+                catch (Exception)
                 {
                     Console.WriteLine(sqlCommand.CommandText);
                 }
