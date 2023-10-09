@@ -1,10 +1,10 @@
-﻿using IMDBLib.titleBasics;
+﻿using IMDBLib;
 using System.Data.SqlClient;
 
 namespace IMDBConsole
 {
-    internal interface IInserter
+    public interface IInserter<T>
     {
-        void InsertData(SqlConnection sqlConn, List<Title> titles);
+        void InsertData(SqlConnection sqlConn, List<T> datas);
     }
 }
