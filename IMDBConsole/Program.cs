@@ -4,7 +4,7 @@
     {
         public static void Main(string[]? args)
         {
-            InsertersProcessor processor = new();
+            ActionsProcessor processor = new();
             Console.WriteLine("Select dataset:");
 
             Console.WriteLine("1: Title Basics");
@@ -19,23 +19,23 @@
             {
                 case "1":
                     Console.Clear();
-                    processor.InserterSelector("Title.Basics");
+                    processor.DatasetSelector("Title.Basics");
                     break;
                 case "2":
                     Console.Clear();
-                    processor.InserterSelector("Name.Basics");
+                    processor.DatasetSelector("Name.Basics");
                     break;
                 case "3":
                     Console.Clear();
-                    processor.InserterSelector("Title.Crew");
+                    processor.DatasetSelector("Title.Crew");
                     break;
                 case "4":
                     Console.Clear();
-                    processor.InserterSelector("Title.Akas");
+                    processor.DatasetSelector("Title.Akas");
                     break;
                 case "5":
                     Console.Clear();
-                    processor.InserterSelector("Title.Principals");
+                    processor.DatasetSelector("Title.Principals");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");

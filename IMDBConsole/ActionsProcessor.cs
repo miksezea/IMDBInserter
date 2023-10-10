@@ -1,16 +1,14 @@
-﻿using IMDBLib.titleBasics;
+﻿using IMDBConsole.TitleActions;
 using System.Data.SqlClient;
-using IMDBConsole.TitleActions;
 
 namespace IMDBConsole
 {
-    public class InsertersProcessor
+    public class ActionsProcessor
     {
         private static readonly string connString = "server=localhost; database=MyIMDB;" +
             "user id=sa; password=bibliotek; TrustServerCertificate=True";
         private static readonly string tsvPath = @"C:\Users\mikke\OneDrive\Desktop\4Semester\IMDBTSV\";
-        public void InserterSelector(string tsv)
-        {
+        public void DatasetSelector(string tsv) {
             Console.WriteLine(tsv);
             Console.WriteLine();
 
@@ -29,12 +27,12 @@ namespace IMDBConsole
             {
                 case "0":
                     Console.Clear();
-                    CheckData(tsv, connString);
+                    DBCount(tsv);
 
                     break;
                 case "1":
                     Console.Clear();
-                    DeleteData(tsv, connString);
+                    DBDeleteRows(tsv);
 
                     break;
                 case "2":
@@ -62,36 +60,48 @@ namespace IMDBConsole
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
                     Console.WriteLine();
-                    InserterSelector(tsv);
+                    DatasetSelector(tsv);
                     break;
             }
         }
 
-        public void CheckData(string tsv, string connString)
+        public void DBCount(string tsv)
         {
+            DateTime before = DateTime.Now;
+            SqlConnection sqlConn = new(connString);
+            sqlConn.Open();
             switch (tsv)
             {
                 case "Title.Basics":
                     TitleExtra titleExtra = new();
-                    titleExtra.CheckTitleData(tsv, connString);
+                    titleExtra.DBTitleCount(sqlConn);
                     break;
             }
+            sqlConn.Close();
+            DateTime after = DateTime.Now;
+            Console.WriteLine("Tid: " + (after - before));
         }
 
-        public void DeleteData(string tsv, string connString)
+        public void DBDeleteRows(string tsv)
         {
+            DateTime before = DateTime.Now;
+            SqlConnection sqlConn = new(connString);
+            sqlConn.Open();
             switch (tsv)
             {
                 case "Title.Basics":
                     TitleExtra titleExtra = new();
-                    titleExtra.DeleteTitleData(tsv, connString);
+                    titleExtra.DBTitleDeleteRows(sqlConn);
                     break;
             }
+            sqlConn.Close();
+            DateTime after = DateTime.Now;
+            Console.WriteLine("Tid: " + (after - before));
         }
 
         public void InsertData(string tsv, string connString, int inserterType)
         {
-            string path = tsvPath + tsv + ".tsv";
+            string path = tsvPath + tsv + @".tsv\data.tsv";
 
             Console.WriteLine("How many lines do you want to add? No input for all lines");
             string? input = Console.ReadLine();
@@ -101,10 +111,13 @@ namespace IMDBConsole
                 lineAmount = Convert.ToInt32(input);
             }
 
+            TitleInserter titleInserter = new();
+
             switch (tsv)
             {
                 case "Title.Basics":
-                    
+
+                    titleInserter.InsertTitleData(connString, inserterType, path, lineAmount);
                     break;
             }
         }

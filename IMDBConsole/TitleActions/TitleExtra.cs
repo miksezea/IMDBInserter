@@ -1,11 +1,10 @@
-﻿using IMDBLib.titleBasics;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
 namespace IMDBConsole.TitleActions
 {
     public class TitleExtra
     {
-        public void CheckTitleData(string tsv, string connString)
+        public void DBTitleCount(SqlConnection sqlConn)
         {
             Console.WriteLine("Which Table do you want to check?");
             Console.WriteLine("1: Titles");
@@ -18,45 +17,40 @@ namespace IMDBConsole.TitleActions
             {
                 case "1":
                     Console.Clear();
-                    WhichTable(connString, "Titles");
+                    CountTable(sqlConn, "Titles");
                     break;
                 case "2":
                     Console.Clear();
-                    WhichTable(connString, "Genres");
+                    CountTable(sqlConn, "Genres");
                     break;
                 case "3":
                     Console.Clear();
-                    WhichTable(connString, "TitlesGenres");
+                    CountTable(sqlConn, "TitlesGenres");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
                     Console.WriteLine();
-                    CheckTitleData(tsv, connString);
+                    DBTitleCount(sqlConn);
                     break;
             }
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
-            InsertersProcessor insertersProcessor = new();
-            insertersProcessor.InserterSelector(tsv);
+            ActionsProcessor insertersProcessor = new();
+            insertersProcessor.DatasetSelector("Title.Basics");
+        }
+        private void CountTable(SqlConnection sqlConn, string table)
+        {
+            SqlCommand cmd = new($"SELECT COUNT(*) FROM {table}", sqlConn);
+            int count = (int)cmd.ExecuteScalar();
+            Console.WriteLine($"There are {count} rows in {table}.");
+            Console.WriteLine();
         }
 
-        private void WhichTable(string connString, string table)
+        public void DBTitleDeleteRows(SqlConnection sqlConn)
         {
-            using (SqlConnection sqlConn = new(connString))
-            {
-                sqlConn.Open();
-                SqlCommand cmd = new($"SELECT COUNT(*) FROM {table}", sqlConn);
-                int count = (int)cmd.ExecuteScalar();
-                Console.WriteLine($"There are {count} rows in {table}.");
-                Console.WriteLine();
-            }
-        }
-
-        public void DeleteTitleData(string tsv, string connString)
-        {
-               Console.WriteLine("Which Table do you want to delete?");
+            Console.WriteLine("Which Table do you want to delete?");
             Console.WriteLine("1: Titles");
             Console.WriteLine("2: Genres");
             Console.WriteLine("3: TitlesGenres");
@@ -68,45 +62,48 @@ namespace IMDBConsole.TitleActions
             {
                 case "1":
                     Console.Clear();
-                    DeleteTable(connString, "Titles");
+                    DeleteRows(sqlConn, "Titles");
                     break;
                 case "2":
                     Console.Clear();
-                    DeleteTable(connString, "Genres");
+                    DeleteRows(sqlConn, "Genres");
                     break;
                 case "3":
                     Console.Clear();
-                    DeleteTable(connString, "TitlesGenres");
+                    DeleteRows(sqlConn, "TitlesGenres");
                     break;
                 case "4":
                     Console.Clear();
-                    DeleteTable(connString, "Titles");
-                    DeleteTable(connString, "Genres");
+                    DeleteRows(sqlConn, "Titles");
+                    DeleteRows(sqlConn, "Genres");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
                     Console.WriteLine();
-                    DeleteTitleData(tsv, connString);
+                    DBTitleDeleteRows(sqlConn);
                     break;
             }
-
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
-            InsertersProcessor insertersProcessor = new();
-            insertersProcessor.InserterSelector(tsv);
+            ActionsProcessor actionsProcessor = new();
+            actionsProcessor.DatasetSelector("Title.Basics");
+        }
+        private void DeleteRows(SqlConnection sqlConn, string table)
+        {
+            SqlCommand cmd = new($"DELETE FROM {table}", sqlConn);
+            cmd.ExecuteNonQuery();
+            Console.WriteLine($"Deleted all rows in {table}.");
+            Console.WriteLine();
         }
 
-        private void DeleteTable(string connString, string table)
+        public int GetGenreID(SqlConnection sqlConn, string genreName)
         {
-            using (SqlConnection sqlConn = new(connString))
-            {
-                sqlConn.Open();
-                SqlCommand cmd = new($"DELETE FROM {table}", sqlConn);
-                cmd.ExecuteNonQuery();
-                Console.WriteLine($"Deleted all rows in {table}.");
-                Console.WriteLine();
-            }
+            SqlCommand sqlCmd = new("SELECT [genreID] FROM [dbo].[Genres] WHERE [genreName] = @GenreName", sqlConn);
+            sqlCmd.Parameters.AddWithValue("@GenreName", genreName);
+            object result = sqlCmd.ExecuteScalar();
+
+            return (int)result;
         }
     }
 }
