@@ -18,8 +18,8 @@ namespace IMDBConsole.TitleActions
                 "INSERT INTO [dbo].[Titles]" +
                 "([tconst], [titleType], [primaryTitle], [originalTitle]," +
                 "[isAdult], [startYear], [endYear], [runtimeMinutes])VALUES " +
-                "$(@tconst, @titleType, @primaryTitle, @originalTitle, " +
-                "$@isAdult, @startYear, @endYear, @runtimeMinutes)", sqlConn);
+                $"(@tconst, @titleType, @primaryTitle, @originalTitle, " +
+                $"@isAdult, @startYear, @endYear, @runtimeMinutes)", sqlConn);
 
             SqlParameter tconstParameter = new("@tconst", System.Data.SqlDbType.VarChar, 10);
             sqlCmd.Parameters.Add(tconstParameter);
