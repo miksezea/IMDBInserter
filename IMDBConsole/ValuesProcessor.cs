@@ -1,4 +1,6 @@
-﻿namespace IMDBConsole
+﻿using System.Data.SqlClient;
+
+namespace IMDBConsole
 {
     public class ValuesProcessor
     {
@@ -52,16 +54,15 @@
                 return input;
             }
         }
-
-        public string CheckStringForNull(string? input)
+        public void FillParameter(SqlParameter parameter, object? value)
         {
-            if (input == null)
+            if (value != null)
             {
-                return "NULL";
+                parameter.Value = value;
             }
             else
             {
-                return "'" + input + "'";
+                parameter.Value = DBNull.Value;
             }
         }
     }

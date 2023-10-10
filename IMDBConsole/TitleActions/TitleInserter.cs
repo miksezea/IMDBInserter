@@ -7,17 +7,22 @@ namespace IMDBConsole.TitleActions
 {
     public class TitleInserter
     {
+        readonly List<Title> titles = new();
+        readonly List<Genre> genres = new();
+        readonly List<TitleGenre> titleGenres = new();
+        int _lineAmount = 0;
+        string _path = "";
+        SqlConnection sqlConn = new();
+
         public void InsertTitleData(string connString, int inserterType, string path, int lineAmount) {
             DateTime before = DateTime.Now;
 
-            List<Title> titles = new();
-            List<Genre> genres = new();
-            List<TitleGenre> titleGenres = new();
-
-            SqlConnection sqlConn = new(connString);
+            _lineAmount = lineAmount;
+            _path = path;
+            sqlConn = new(connString);
             sqlConn.Open();
 
-            MakeLists(sqlConn, path, lineAmount, titles, genres, titleGenres);
+            MakeLists();
 
             IInserter<Title>? titleInsert = null;
             IInserter<Genre>? genreInsert = null;
@@ -30,9 +35,9 @@ namespace IMDBConsole.TitleActions
                     titleGenreInsert = new TitleNormal();
                     break;
                 case 2:
-                    //titleInsert = new TitlePrepared();
-                    //genreInsert = new TitlePrepared();
-                    //titleGenreInsert = new TitlePrepared();
+                    titleInsert = new TitlePrepared();
+                    genreInsert = new TitlePrepared();
+                    titleGenreInsert = new TitlePrepared();
                     break;
                 case 3:
                     //titleInsert = new TitleBulked();
@@ -50,37 +55,40 @@ namespace IMDBConsole.TitleActions
 
             Console.WriteLine("Tid: " + (after - before));
         }
-        public void MakeLists(SqlConnection sqlConn, string path, int lineAmount,
-            List<Title> titles, List<Genre> genres, List<TitleGenre> titleGenres)
-        {
 
-            IEnumerable<string> lines = File.ReadLines(path).Skip(1);
-            if (lineAmount > 0) {
-                lines = lines.Take(lineAmount);
+        readonly HashSet<string> existingGenres = new();
+        readonly ValuesProcessor v = new();
+        public void MakeLists()
+        {
+            IEnumerable<string> lines = File.ReadLines(_path).Skip(1);
+            if (_lineAmount > 0)
+            {
+                lines = lines.Take(_lineAmount);
             }
 
-            HashSet<string> existingGenres = new();
-            ValuesProcessor v = new();
-            TitleExtra extra = new();
-
-            foreach (string line in lines) {
+            foreach (string line in lines)
+            {
                 string[] values = line.Split("\t");
 
-                if (values.Length == 9) {
+                if (values.Length == 9)
+                {
                     // Titles table
                     titles.Add(new Title(values[0], values[1], values[2], values[3],
                         v.ConvertToBool(values[4]), v.ConvertToInt(values[5]),
                         v.ConvertToInt(values[6]), v.ConvertToInt(values[7])));
 
                     // Genres table and TitlesGenres table
-                    if (values[8] != @"\N") {
+                    if (values[8] != @"\N")
+                    {
                         string[] genreNames = values[8].Split(",");                        
 
-                        foreach (string genreName in genreNames) {
-                            if (!existingGenres.Contains(genreName)) {
+                        foreach (string genreName in genreNames)
+                        {
+                            if (!existingGenres.Contains(genreName))
+                            {
                                 existingGenres.Add(genreName);
 
-                                int genreID = extra.GetGenreID(sqlConn, genreName);
+                                int genreID = GetGenreMaxId();
 
                                 if (genreID == -1)
                                 {
@@ -88,10 +96,10 @@ namespace IMDBConsole.TitleActions
                                         "([genreName])VALUES " +
                                         $"('{genreName}')", sqlConn);
                                     insertGenreCmd.ExecuteNonQuery();
-
-                                    genreID = extra.GetGenreID(sqlConn, genreName);
+                                } else
+                                {
+                                    genres.Add(new Genre(genreName));
                                 }
-                                genres.Add(new Genre(genreID, genreName));
                             }
                             titleGenres.Add(new TitleGenre(values[0], genreName));
                         }
@@ -99,6 +107,21 @@ namespace IMDBConsole.TitleActions
                 }
             }
             Console.WriteLine("Amount of titles: " + titles.Count);
+        }
+        public int GetGenreMaxId()
+        {
+            SqlCommand maxCmd = new("SELECT MAX(genreID) FROM [dbo].[Genres]", sqlConn);
+            object result = maxCmd.ExecuteScalar();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return (int)result;
+            }
+            else
+            {
+                // Genre not found
+                return -1;
+            }
         }
     }
 }

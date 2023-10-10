@@ -6,7 +6,6 @@ namespace IMDBConsole.TitleActions
 {
     public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre> {
         readonly ValuesProcessor v = new();
-        readonly TitleExtra extra = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles) {
             foreach (Title title in titles) {
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Titles]" +
@@ -48,20 +47,39 @@ namespace IMDBConsole.TitleActions
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
         {
             foreach (TitleGenre titleGenre in titleGenres) {
-                int genreID = extra.GetGenreID(sqlConn, titleGenre.genreName);
+                int genreID = GetGenreID(sqlConn, titleGenre.genreName);
 
-                SqlCommand sqlCmd = new("INSERT INTO [dbo].[TitlesGenres]" +
-                    "([tconst],[genreID])VALUES " +
-                    $"('{titleGenre.tconst}',{genreID})", sqlConn);
+                if (genreID != -1) {
+                    // Insert the data into the TitlesGenres table
+                    SqlCommand sqlCmd = new("INSERT INTO [dbo].[TitlesGenres]" +
+                        "([tconst],[genreID])VALUES " +
+                        $"('{titleGenre.tconst}',{genreID})", sqlConn);
 
-                try {
-                    sqlCmd.ExecuteNonQuery();
+                    try {
+                        sqlCmd.ExecuteNonQuery();
+                    } catch (Exception ex) {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(sqlCmd.CommandText);
+                        Console.ReadKey();
+                    }
+                } else {
+                    Console.WriteLine($"Genre '{titleGenre.genreName}' not found.");
                 }
-                catch (Exception ex) {
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine(sqlCmd.CommandText);
-                    Console.ReadKey();
-                }
+            }
+        }
+        public int GetGenreID(SqlConnection sqlConn, string genreName)
+        {
+            SqlCommand sqlCmd = new($"SELECT [genreID] FROM [dbo].[Genres] WHERE [genreName] = '{genreName}'", sqlConn);
+            object result = sqlCmd.ExecuteScalar();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return (int)result;
+            }
+            else
+            {
+                // Genre not found
+                return -1;
             }
         }
     }
