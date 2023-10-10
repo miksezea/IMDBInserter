@@ -1,4 +1,4 @@
-﻿using IMDBConsole.TitleActions;
+﻿using IMDBConsole.titleActions;
 using System.Data.SqlClient;
 
 namespace IMDBConsole
@@ -9,7 +9,8 @@ namespace IMDBConsole
             "user id=sa; password=bibliotek; TrustServerCertificate=True";
         private static readonly string tsvPath = @"C:\Users\mikke\OneDrive\Desktop\4Semester\IMDBTSV\";
         private string _tsv = "";
-        public void DatasetSelector(string tsv) {
+        public void DatasetSelector(string tsv) 
+        {
             _tsv = tsv;
             Console.WriteLine(_tsv);
             Console.WriteLine();
@@ -19,7 +20,7 @@ namespace IMDBConsole
             Console.WriteLine("1: Delete all of " + _tsv + " In DB");
             Console.WriteLine("2: Normal insert of " + _tsv);
             Console.WriteLine("3: Prepared insert of " + _tsv);
-            Console.WriteLine("4: Bulked insert" + _tsv);
+            Console.WriteLine("4: Bulked insert of " + _tsv);
             Console.WriteLine("5: Go back");
 
             string? input = Console.ReadLine();

@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace IMDBConsole.TitleActions
+namespace IMDBConsole.titleActions
 {
     public class TitleExtra
     {
@@ -93,6 +93,21 @@ namespace IMDBConsole.TitleActions
             }
             Console.WriteLine($"Deleted all rows in {table}.");
             Console.WriteLine();
+        }
+        public int GetGenreMaxId(SqlConnection sqlConn)
+        {
+            SqlCommand maxCmd = new("SELECT MAX(genreID) FROM [dbo].[Genres]", sqlConn);
+            object result = maxCmd.ExecuteScalar();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return (int)result;
+            }
+            else
+            {
+                // Genre not found
+                return -1;
+            }
         }
         public int GetGenreID(SqlConnection sqlConn, string genreName)
         {

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\IMDBLib\IMDBLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="nameActions\" />
+  </ItemGroup>
+
 </Project>

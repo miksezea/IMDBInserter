@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System.Data;
+using System.Data.SqlClient;
 
 namespace IMDBConsole
 {
@@ -54,7 +55,7 @@ namespace IMDBConsole
                 return input;
             }
         }
-        public void FillParameter(SqlParameter parameter, object? value)
+        public void FillParameterPrepared(SqlParameter parameter, object? value)
         {
             if (value != null)
             {
@@ -63,6 +64,17 @@ namespace IMDBConsole
             else
             {
                 parameter.Value = DBNull.Value;
+            }
+        }
+        public void FillParameterBulked(DataRow row, string columnName, object? value)
+        {
+            if (value != null)
+            {
+                row[columnName] = value;
+            }
+            else
+            {
+                row[columnName] = DBNull.Value;
             }
         }
     }

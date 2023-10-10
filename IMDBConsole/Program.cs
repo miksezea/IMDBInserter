@@ -8,10 +8,10 @@
             Console.WriteLine("Select dataset:");
 
             Console.WriteLine("1: Title Basics");
-            Console.WriteLine("2: Name Basics");
-            Console.WriteLine("3: Title Crew");
-            Console.WriteLine("4: Title Akas");
-            Console.WriteLine("5: Title Principals");
+            Console.WriteLine("2: Name Basics (NOT IMPLEMENTED)");
+            Console.WriteLine("3: Title Crew (NOT IMPLEMENTED)");
+            Console.WriteLine("4: Title Akas (NOT IMPLEMENTED)");
+            Console.WriteLine("5: Title Principals (NOT IMPLEMENTED)");
 
             string? input = Console.ReadLine();
 

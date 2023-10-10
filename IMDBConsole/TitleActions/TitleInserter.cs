@@ -1,9 +1,7 @@
 ﻿using IMDBLib.titleBasics;
-using System.Data.Common;
 using System.Data.SqlClient;
 
-
-namespace IMDBConsole.TitleActions
+namespace IMDBConsole.titleActions
 {
     public class TitleInserter
     {
@@ -13,8 +11,12 @@ namespace IMDBConsole.TitleActions
         int _lineAmount = 0;
         string _path = "";
         SqlConnection sqlConn = new();
+        readonly HashSet<string> existingGenres = new();
+        readonly ValuesProcessor v = new();
+        readonly TitleExtra e = new();
 
-        public void InsertTitleData(string connString, int inserterType, string path, int lineAmount) {
+        public void InsertTitleData(string connString, int inserterType, string path, int lineAmount)
+        {
             DateTime before = DateTime.Now;
 
             _lineAmount = lineAmount;
@@ -28,7 +30,8 @@ namespace IMDBConsole.TitleActions
             IInserter<Genre>? genreInsert = null;
             IInserter<TitleGenre>? titleGenreInsert = null;
 
-            switch (inserterType) {
+            switch (inserterType) 
+            {
                 case 1:
                     titleInsert = new TitleNormal();
                     genreInsert = new TitleNormal();
@@ -40,9 +43,9 @@ namespace IMDBConsole.TitleActions
                     titleGenreInsert = new TitlePrepared();
                     break;
                 case 3:
-                    //titleInsert = new TitleBulked();
-                    //genreInsert = new TitleBulked();
-                    //titleGenreInsert = new TitleBulked();
+                    titleInsert = new TitleBulked();
+                    genreInsert = new TitleBulked();
+                    titleGenreInsert = new TitleBulked();
                     break;
             }
             titleInsert?.InsertData(sqlConn, titles);
@@ -56,8 +59,6 @@ namespace IMDBConsole.TitleActions
             Console.WriteLine("Tid: " + (after - before));
         }
 
-        readonly HashSet<string> existingGenres = new();
-        readonly ValuesProcessor v = new();
         public void MakeLists()
         {
             IEnumerable<string> lines = File.ReadLines(_path).Skip(1);
@@ -88,7 +89,7 @@ namespace IMDBConsole.TitleActions
                             {
                                 existingGenres.Add(genreName);
 
-                                int genreID = GetGenreMaxId();
+                                int genreID = e.GetGenreMaxId(sqlConn);
 
                                 if (genreID == -1)
                                 {
@@ -96,7 +97,8 @@ namespace IMDBConsole.TitleActions
                                         "([genreName])VALUES " +
                                         $"('{genreName}')", sqlConn);
                                     insertGenreCmd.ExecuteNonQuery();
-                                } else
+                                } 
+                                else
                                 {
                                     genres.Add(new Genre(genreName));
                                 }
@@ -107,21 +109,6 @@ namespace IMDBConsole.TitleActions
                 }
             }
             Console.WriteLine("Amount of titles: " + titles.Count);
-        }
-        public int GetGenreMaxId()
-        {
-            SqlCommand maxCmd = new("SELECT MAX(genreID) FROM [dbo].[Genres]", sqlConn);
-            object result = maxCmd.ExecuteScalar();
-
-            if (result != null && result != DBNull.Value)
-            {
-                return (int)result;
-            }
-            else
-            {
-                // Genre not found
-                return -1;
-            }
         }
     }
 }
