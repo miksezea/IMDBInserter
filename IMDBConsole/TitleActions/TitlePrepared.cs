@@ -11,6 +11,7 @@ namespace IMDBConsole.TitleActions
     public class TitlePrepared : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
         readonly ValuesProcessor v = new();
+        readonly TitleExtra e = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
             SqlCommand sqlCmd = new("" +
@@ -71,12 +72,64 @@ namespace IMDBConsole.TitleActions
 
         public void InsertData(SqlConnection sqlConn, List<Genre> genres)
         {
-            throw new NotImplementedException();
+            SqlCommand sqlCmd = new("" +
+                "INSERT INTO [dbo].[Genres]" +
+                "([genreName])VALUES (@genreName)", sqlConn);
+
+            SqlParameter genreNameParameter = new("@genreName", System.Data.SqlDbType.VarChar, 50);
+            sqlCmd.Parameters.Add(genreNameParameter);
+
+            sqlCmd.Prepare();
+
+            foreach (Genre genre in genres)
+            {
+                v.FillParameter(genreNameParameter, genre.genreName);
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
+                }
+            }
         }
 
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
         {
-            throw new NotImplementedException();
+            SqlCommand sqlCmd = new("" +
+                "INSERT INTO [dbo].[TitlesGenres]" +
+                "([tconst],[genreID])VALUES (@tconst, @genreID)", sqlConn);
+            
+            SqlParameter tconstParameter = new("@tconst", System.Data.SqlDbType.VarChar, 10);
+            sqlCmd.Parameters.Add(tconstParameter);
+
+            SqlParameter genreIDParameter = new("@genreID", System.Data.SqlDbType.Int);
+            sqlCmd.Parameters.Add(genreIDParameter);
+
+            sqlCmd.Prepare();
+
+            foreach (TitleGenre titleGenre in titleGenres)
+            {
+                int genreID = e.GetGenreID(sqlConn, titleGenre.genreName);
+
+                v.FillParameter(tconstParameter, titleGenre.tconst);
+
+                v.FillParameter(genreIDParameter, genreID);
+                
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
+                }
+            }
         }
     }
 }

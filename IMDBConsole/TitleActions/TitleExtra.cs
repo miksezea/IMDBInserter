@@ -94,5 +94,20 @@ namespace IMDBConsole.TitleActions
             Console.WriteLine($"Deleted all rows in {table}.");
             Console.WriteLine();
         }
+        public int GetGenreID(SqlConnection sqlConn, string genreName)
+        {
+            SqlCommand sqlCmd = new($"SELECT [genreID] FROM [dbo].[Genres] WHERE [genreName] = '{genreName}'", sqlConn);
+            object result = sqlCmd.ExecuteScalar();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return (int)result;
+            }
+            else
+            {
+                // Genre not found
+                return -1;
+            }
+        }
     }
 }

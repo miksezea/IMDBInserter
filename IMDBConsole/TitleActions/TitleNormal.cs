@@ -6,6 +6,7 @@ namespace IMDBConsole.TitleActions
 {
     public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre> {
         readonly ValuesProcessor v = new();
+        readonly TitleExtra e = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles) {
             foreach (Title title in titles) {
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Titles]" +
@@ -47,7 +48,7 @@ namespace IMDBConsole.TitleActions
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
         {
             foreach (TitleGenre titleGenre in titleGenres) {
-                int genreID = GetGenreID(sqlConn, titleGenre.genreName);
+                int genreID = e.GetGenreID(sqlConn, titleGenre.genreName);
 
                 if (genreID != -1) {
                     // Insert the data into the TitlesGenres table
@@ -65,21 +66,6 @@ namespace IMDBConsole.TitleActions
                 } else {
                     Console.WriteLine($"Genre '{titleGenre.genreName}' not found.");
                 }
-            }
-        }
-        public int GetGenreID(SqlConnection sqlConn, string genreName)
-        {
-            SqlCommand sqlCmd = new($"SELECT [genreID] FROM [dbo].[Genres] WHERE [genreName] = '{genreName}'", sqlConn);
-            object result = sqlCmd.ExecuteScalar();
-
-            if (result != null && result != DBNull.Value)
-            {
-                return (int)result;
-            }
-            else
-            {
-                // Genre not found
-                return -1;
             }
         }
     }
