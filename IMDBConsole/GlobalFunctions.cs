@@ -50,6 +50,22 @@ namespace IMDBConsole
                 return -1;
             }
         }
+        public bool CheckForTconst(string tconst, SqlConnection sqlConn)
+        {
+            SqlCommand sqlCmd = new($"SELECT [nconst] FROM [dbo].[Titles] WHERE [tconst] = '{tconst}'", sqlConn);
+            object result = sqlCmd.ExecuteScalar();
+
+            if (result != null && result != DBNull.Value)
+            {
+                return true;
+            }
+            else
+            {
+                // Object not found
+                return false;
+            }
+        }
+
 
         public bool ConvertToBool(string input)
         {

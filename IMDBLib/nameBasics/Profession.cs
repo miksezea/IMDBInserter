@@ -1,5 +1,5 @@
 ﻿
-namespace IMDBLib.nameBasicsAndCrew
+namespace IMDBLib.nameBasics
 {
     public class Profession
     {

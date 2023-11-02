@@ -1,5 +1,6 @@
-﻿using IMDBConsole.titleActions;
-using IMDBConsole.nameCrewActions;
+﻿using IMDBConsole.nameActions;
+using IMDBConsole.titleActions;
+using IMDBConsole.crewActions;
 using System.Data.SqlClient;
 
 namespace IMDBConsole
@@ -10,125 +11,63 @@ namespace IMDBConsole
             "user id=sa; password=bibliotek; TrustServerCertificate=True";
         private static readonly string tsvPath = @"C:\Users\mikke\OneDrive\Desktop\4Semester\IMDBTSV\";
         private string _tsv = "";
-        private string _tsv2 = "";
-        public void DatasetSelector(string tsv, string? tsv2) 
+        public void DatasetSelector(string tsv)
         {
             _tsv = tsv;
-            if (tsv2 != null)
+
+            Console.WriteLine(_tsv);
+            Console.WriteLine();
+
+            Console.WriteLine("Choose action:");
+            Console.WriteLine("0: Check amount for " + _tsv + " data");
+            Console.WriteLine("1: Delete all of " + _tsv + " In DB");
+            Console.WriteLine("2: Normal insert of " + _tsv);
+            Console.WriteLine("3: Prepared insert of " + _tsv);
+            Console.WriteLine("4: Bulked insert of " + _tsv);
+            Console.WriteLine("5: Go back");
+
+            string? input = Console.ReadLine();
+
+
+            switch (input)
             {
-                _tsv2 = tsv2;
+                case "0":
+                    Console.Clear();
+                    DBCount();
 
-                Console.WriteLine(_tsv + " and " + _tsv2);
-                Console.WriteLine();
+                    break;
+                case "1":
+                    Console.Clear();
+                    DBDeleteRows();
 
-                Console.WriteLine("Choose action:");
-                Console.WriteLine("0: Check amount for " + _tsv + " or " + _tsv2 + " data");
-                Console.WriteLine("1: Delete all of " + _tsv + " or " + _tsv2 + " In DB");
-                Console.WriteLine("2: Normal insert of " + _tsv + " or " + _tsv2);
-                Console.WriteLine("3: Prepared insert of " + _tsv + " or " + _tsv2);
-                Console.WriteLine("4: Bulked insert of " + _tsv + " or " + _tsv2);
-                Console.WriteLine("5: Go back");
-
-                string? input = Console.ReadLine();
-
-
-                switch (input)
-                {
-                    case "0":
-                        Console.Clear();
-                        DBCount();
-
-                        break;
-                    case "1":
-                        Console.Clear();
-                        DBDeleteRows();
-
-                        break;
-                    case "2":
-                        Console.Clear();
-                        Console.WriteLine("Normal insert chosen...");
-                        Console.WriteLine();
-                        InsertData(1);
-                        break;
-                    case "3":
-                        Console.Clear();
-                        Console.WriteLine("Prepared insert chosen...");
-                        Console.WriteLine();
-                        InsertData(2);
-                        break;
-                    case "4":
-                        Console.Clear();
-                        Console.WriteLine("Bulked insert chosen...");
-                        Console.WriteLine();
-                        InsertData(3);
-                        break;
-                    case "5":
-                        Console.Clear();
-                        Program.Main(null);
-                        break;
-                    default:
-                        Console.WriteLine($"{input} is not a valid option.");
-                        Console.WriteLine();
-                        DatasetSelector(_tsv, _tsv2);
-                        break;
-                }
-            }
-            else
-            {
-                Console.WriteLine(_tsv);
-                Console.WriteLine();
-
-                Console.WriteLine("Choose action:");
-                Console.WriteLine("0: Check amount for " + _tsv + " data");
-                Console.WriteLine("1: Delete all of " + _tsv + " In DB");
-                Console.WriteLine("2: Normal insert of " + _tsv);
-                Console.WriteLine("3: Prepared insert of " + _tsv);
-                Console.WriteLine("4: Bulked insert of " + _tsv);
-                Console.WriteLine("5: Go back");
-
-                string? input = Console.ReadLine();
-
-
-                switch (input)
-                {
-                    case "0":
-                        Console.Clear();
-                        DBCount();
-
-                        break;
-                    case "1":
-                        Console.Clear();
-                        DBDeleteRows();
-
-                        break;
-                    case "2":
-                        Console.Clear();
-                        Console.WriteLine("Normal insert chosen...");
-                        Console.WriteLine();
-                        InsertData(1);
-                        break;
-                    case "3":
-                        Console.Clear();
-                        Console.WriteLine("Prepared insert chosen...");
-                        Console.WriteLine();
-                        InsertData(2);
-                        break;
-                    case "4":
-                        Console.Clear();
-                        Console.WriteLine("Bulked insert chosen...");
-                        Console.WriteLine();
-                        InsertData(3);
-                        break;
-                    case "5":
-                        Console.Clear();
-                        Program.Main(null);
-                        break;
-                    default:
-                        Console.WriteLine($"{input} is not a valid option.");
-                        Console.WriteLine();
-                        DatasetSelector(_tsv, null);
-                        break;
-                }
+                    break;
+                case "2":
+                    Console.Clear();
+                    Console.WriteLine("Normal insert chosen...");
+                    Console.WriteLine();
+                    InsertData(1);
+                    break;
+                case "3":
+                    Console.Clear();
+                    Console.WriteLine("Prepared insert chosen...");
+                    Console.WriteLine();
+                    InsertData(2);
+                    break;
+                case "4":
+                    Console.Clear();
+                    Console.WriteLine("Bulked insert chosen...");
+                    Console.WriteLine();
+                    InsertData(3);
+                    break;
+                case "5":
+                    Console.Clear();
+                    Program.Main(null);
+                    break;
+                default:
+                    Console.WriteLine($"{input} is not a valid option.");
+                    Console.WriteLine();
+                    DatasetSelector(_tsv);
+                    break;
             }
         }
 
@@ -144,14 +83,18 @@ namespace IMDBConsole
                     titleExtra.DBTitleCount(sqlConn);
                     break;
                 case "Name.Basics":
-                    NameCrewExtra nameCrewExtra = new();
-                    nameCrewExtra.DBNameCrewCount(sqlConn);
+                    NameExtra nameExtra = new();
+                    nameExtra.DBNameCount(sqlConn);
+                    break;
+                case "Title.Crew":
+                    CrewExtra crewExtra = new();
+                    crewExtra.DBCrewCount(sqlConn);
                     break;
                 case "Title.Akas": // TODO
-                    DatasetSelector(_tsv, null);
+                    DatasetSelector(_tsv);
                     break;
                 case "Title.Principals": // TODO
-                    DatasetSelector(_tsv, null);
+                    DatasetSelector(_tsv);
                     break;
             }
             sqlConn.Close();
@@ -161,14 +104,7 @@ namespace IMDBConsole
             Console.ReadKey();
             Console.Clear();
 
-            if (_tsv2 != "")
-            {
-                DatasetSelector(_tsv, _tsv2);
-            }
-            else
-            {
-                DatasetSelector(_tsv, null);
-            }
+            DatasetSelector(_tsv);
         }
 
         public void DBDeleteRows()
@@ -182,9 +118,13 @@ namespace IMDBConsole
                     TitleExtra titleExtra = new();
                     titleExtra.DBTitleDeleteRows(sqlConn);
                     break;
-                case "Name.Basics": // TODO
-                    NameCrewExtra nameCrewExtra = new();
-                    nameCrewExtra.DBNameCrewDeleteRows(sqlConn);
+                case "Name.Basics":
+                    NameExtra nameExtra = new();
+                    nameExtra.DBNameDeleteRows(sqlConn);
+                    break;
+                case "Title.Crew":
+                    CrewExtra crewExtra = new();
+                    crewExtra.DBCrewDeleteRows(sqlConn);
                     break;
                 case "Title.Akas": // TODO
 
@@ -200,98 +140,48 @@ namespace IMDBConsole
             Console.ReadKey();
             Console.Clear();
 
-            if (_tsv2 != "")
-            {
-                DatasetSelector(_tsv, _tsv2);
-            }
-            else
-            {
-                DatasetSelector(_tsv, null);
-            }
+            DatasetSelector(_tsv);
         }
 
         public void InsertData(int inserterType)
         {
             string path = tsvPath + _tsv + @".tsv\data.tsv";
-            
-            if (_tsv2 != "")
+
+            Console.WriteLine("How many lines do you want to add? No input for all lines");
+            string? input = Console.ReadLine();
+            int lineAmount = 0;
+            if (input != null)
             {
-                string path2 = tsvPath + _tsv2 + @".tsv\data.tsv";
-
-                Console.WriteLine($"How many lines do you want to add from {_tsv}? No input for all lines");
-                string? input = Console.ReadLine();
-
-                int lineAmount = 0;
-                if (input != null)
-                {
-                    lineAmount = Convert.ToInt32(input);
-                    Console.WriteLine($"{input} lines selected");
-                }
-                else
-                {
-                    Console.WriteLine("All lines selected");
-                }
-
-                Console.WriteLine($"How many lines do you want to add from {_tsv2}? No input for all lines");
-                string? input2 = Console.ReadLine();
-
-                int lineAmount2 = 0;
-                if (input2 != null)
-                {
-                    lineAmount2 = Convert.ToInt32(input2);
-                    Console.WriteLine($"{input2} lines selected");
-                }
-                else
-                {
-                    Console.WriteLine("All lines selected");
-                }
-
-                NameCrewInserter nameCrewInserter = new();
-                nameCrewInserter.InsertNameCrewData(connString, inserterType, path, lineAmount, path2, lineAmount2);
+                lineAmount = Convert.ToInt32(input);
             }
-            else
+
+            switch (_tsv)
             {
-                Console.WriteLine("How many lines do you want to add? No input for all lines");
-                string? input = Console.ReadLine();
-                int lineAmount = 0;
-                if (input != null)
-                {
-                    lineAmount = Convert.ToInt32(input);
-                }
+                case "Title.Basics":
+                    TitleInserter titleInserter = new();
+                    titleInserter.InsertTitleData(connString, inserterType, path, lineAmount);
+                    break;
+                case "Name.Basics":
+                    NameInserter nameInserter = new();
+                    nameInserter.InsertNameData(connString, inserterType, path, lineAmount);
+                    break;
+                case "Title.Crew":
+                    CrewInserter crewInserter = new();
+                    crewInserter.InsertCrewData(connString, inserterType, path, lineAmount);
+                    break;
+                case "Title.Akas": // TODO
 
-                switch (_tsv)
-                {
-                    case "Title.Basics":
-                        TitleInserter titleInserter = new();
-                        titleInserter.InsertTitleData(connString, inserterType, path, lineAmount);
-                        break;
-                    case "Name.Basics": // TODO
+                    break;
+                case "Title.Principals": // TODO
 
-                        break;
-                    case "Title.Crew": // TODO
-
-                        break;
-                    case "Title.Akas": // TODO
-
-                        break;
-                    case "Title.Principals": // TODO
-
-                        break;
-                }
+                    break;
             }
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
 
-            if (_tsv2 != "")
-            {
-                DatasetSelector(_tsv, _tsv2);
-            }
-            else
-            {
-                DatasetSelector(_tsv, null);
-            }
+            DatasetSelector(_tsv);
         }
     }
 }
