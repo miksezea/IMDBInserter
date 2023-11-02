@@ -1,5 +1,4 @@
-﻿
-using IMDBLib.nameBasics;
+﻿using IMDBLib.nameBasics;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -31,6 +30,7 @@ namespace IMDBConsole.nameActions
             bulkCopy.DestinationTableName = "Names";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(nameTable);
+            Console.WriteLine("Names have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<Profession> professions)
         {
@@ -61,6 +61,7 @@ namespace IMDBConsole.nameActions
             bulkCopy.DestinationTableName = "Professions";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(genreTable);
+            Console.WriteLine("Professions have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<PrimaryProfession> primaryProfessions)
         {
@@ -71,24 +72,16 @@ namespace IMDBConsole.nameActions
 
             foreach (PrimaryProfession primaryProfession in primaryProfessions)
             {
-                int professionID = f.GetID("professionID", "Professions", "professionName", primaryProfession.professionName, sqlConn);
-
-                if (professionID != -1)
-                {
-                    DataRow primaryProfessionRow = primaryProfessionsTable.NewRow();
-                    f.FillParameterBulked(primaryProfessionRow, "nconst", primaryProfession.nconst);
-                    f.FillParameterBulked(primaryProfessionRow, "professionID", professionID);
-                    primaryProfessionsTable.Rows.Add(primaryProfessionRow);
-                }
-                else
-                {
-                    Console.WriteLine($"Profession '{primaryProfession.professionName}' not found.");
-                }
+                DataRow primaryProfessionRow = primaryProfessionsTable.NewRow();
+                f.FillParameterBulked(primaryProfessionRow, "nconst", primaryProfession.nconst);
+                f.FillParameterBulked(primaryProfessionRow, "professionID", primaryProfession.professionID);
+                primaryProfessionsTable.Rows.Add(primaryProfessionRow);
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
             bulkCopy.DestinationTableName = "PrimaryProfessions";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(primaryProfessionsTable);
+            Console.WriteLine("Primary professions have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<KnownForTitle> knownForTitles)
         {
@@ -108,6 +101,7 @@ namespace IMDBConsole.nameActions
             bulkCopy.DestinationTableName = "KnownForTitles";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(knownForTitlesTable);
+            Console.WriteLine("Known for titles have been inserted.");
         }
     }
 }

@@ -63,8 +63,8 @@ namespace IMDBConsole.titleActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Titles have been inserted.");
         }
-
         public void InsertData(SqlConnection sqlConn, List<Genre> genres)
         {
             SqlCommand sqlCmd = new("" +
@@ -90,14 +90,14 @@ namespace IMDBConsole.titleActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Genres have been inserted.");
         }
-
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
         {
             SqlCommand sqlCmd = new("" +
                 "INSERT INTO [dbo].[TitlesGenres]" +
                 "([tconst],[genreID])VALUES (@tconst, @genreID)", sqlConn);
-            
+
             SqlParameter tconstParameter = new("@tconst", System.Data.SqlDbType.VarChar, 10);
             sqlCmd.Parameters.Add(tconstParameter);
 
@@ -108,29 +108,20 @@ namespace IMDBConsole.titleActions
 
             foreach (TitleGenre titleGenre in titleGenres)
             {
-                int genreID = f.GetID("genreID", "Genres", "genreName", titleGenre.genreName, sqlConn);
-
-                if (genreID != -1)
+                f.FillParameterPrepared(tconstParameter, titleGenre.tconst);
+                f.FillParameterPrepared(genreIDParameter, titleGenre.genreID);
+                try
                 {
-                    f.FillParameterPrepared(tconstParameter, titleGenre.tconst);
-                    f.FillParameterPrepared(genreIDParameter, genreID);
-
-                    try
-                    {
-                        sqlCmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(sqlCmd.CommandText);
-                        Console.ReadKey();
-                    }
+                    sqlCmd.ExecuteNonQuery();
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Genre '{titleGenre.genreName}' not found.");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
                 }
             }
+            Console.WriteLine("TitleGenres have been inserted.");
         }
     }
 }

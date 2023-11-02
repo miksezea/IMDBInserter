@@ -29,7 +29,7 @@ namespace IMDBConsole.titleActions
             IInserter<Genre>? genreInsert = null;
             IInserter<TitleGenre>? titleGenreInsert = null;
 
-            switch (inserterType) 
+            switch (inserterType)
             {
                 case 1:
                     titleInsert = new TitleNormal();
@@ -66,6 +66,8 @@ namespace IMDBConsole.titleActions
                 lines = lines.Take(_lineAmount);
             }
 
+            int genreID = f.GetMaxId("genreID", "Genres", sqlConn);
+
             foreach (string line in lines)
             {
                 string[] values = line.Split("\t");
@@ -80,29 +82,27 @@ namespace IMDBConsole.titleActions
                     // Genres table and TitlesGenres table
                     if (values[8] != @"\N")
                     {
-                        string[] genreNames = values[8].Split(",");                        
+                        string[] genreNames = values[8].Split(",");
 
                         foreach (string genreName in genreNames)
                         {
+
                             if (!existingGenres.Contains(genreName))
                             {
                                 existingGenres.Add(genreName);
 
-                                int genreID = f.GetMaxId("genreID", "Genres", sqlConn);
-
                                 if (genreID == -1)
                                 {
-                                    SqlCommand insertGenreCmd = new("INSERT INTO [dbo].[Genres]" +
-                                        "([genreName])VALUES " +
-                                        $"('{genreName}')", sqlConn);
-                                    insertGenreCmd.ExecuteNonQuery();
-                                } 
+                                    genreID = 1;
+                                    genres.Add(new Genre(genreName, genreID));
+                                }
                                 else
                                 {
-                                    genres.Add(new Genre(genreName));
+                                    genreID++;
+                                    genres.Add(new Genre(genreName, genreID));
                                 }
                             }
-                            titleGenres.Add(new TitleGenre(values[0], genreName));
+                            titleGenres.Add(new TitleGenre(values[0], genreID));
                         }
                     }
                 }

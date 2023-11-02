@@ -73,6 +73,8 @@ namespace IMDBConsole.nameActions
                 lines = lines.Take(_lineAmount);
             }
 
+            int professionID = f.GetMaxId("professionID", "Professions", sqlConn);
+
             foreach (string line in lines)
             {
                 string[] values = line.Split("\t");
@@ -93,21 +95,18 @@ namespace IMDBConsole.nameActions
                             {
                                 existingProfessions.Add(professionName);
 
-                                int professionID = f.GetMaxId("professionID", "Professions", sqlConn);
-
                                 if (professionID == -1)
                                 {
-                                    SqlCommand insertProfessionCmd = new("INSERT INTO [dbo].[Professions]" +
-                                        "([professionName])VALUES " +
-                                        $"('{professionName}')", sqlConn);
-                                    insertProfessionCmd.ExecuteNonQuery();
+                                    professionID = 1;
+                                    professions.Add(new Profession(professionName, professionID));
                                 }
                                 else
                                 {
-                                    professions.Add(new Profession(professionName));
+                                    professionID++;
+                                    professions.Add(new Profession(professionName, professionID));
                                 }
                             }
-                            primaryProfessions.Add(new PrimaryProfession(values[0], professionName));
+                            primaryProfessions.Add(new PrimaryProfession(values[0], professionID));
                         }
                     }
 

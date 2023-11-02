@@ -1,5 +1,4 @@
-﻿using IMDBConsole;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 
 namespace IMDBConsole.nameActions
 {

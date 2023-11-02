@@ -17,7 +17,6 @@ namespace IMDBConsole.nameActions
                     $"'{f.ConvertToSqlString(name.primaryName)}'," +
                     $"'{f.CheckIntForNull(name.birthYear)}'," +
                     $"'{f.CheckIntForNull(name.deathYear)}'", sqlConn);
-
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -29,6 +28,7 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Names have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<Profession> professions)
         {
@@ -37,7 +37,6 @@ namespace IMDBConsole.nameActions
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Professions]" +
                     "([professionName])VALUES " +
                     $"('{profession.professionName}')", sqlConn);
-
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -49,44 +48,15 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Professions have been inserted");
         }
         public void InsertData(SqlConnection sqlConn, List<PrimaryProfession> primaryProfessions)
         {
             foreach (PrimaryProfession primaryProfession in primaryProfessions)
             {
-                int professionID = f.GetID("professionID", "Professions", "professionName", primaryProfession.professionName, sqlConn);
-
-                if (professionID != -1)
-                {
-                    SqlCommand sqlCmd = new("INSERT INTO [dbo].[PrimaryProfessions]" +
-                        "([nconst],[professionID])VALUES " +
-                        $"('{primaryProfession.nconst}',{professionID})", sqlConn);
-
-                    try
-                    {
-                        sqlCmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(sqlCmd.CommandText);
-                        Console.ReadKey();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Profession '{primaryProfession.professionName}' not found.");
-                }
-            }
-        }
-        public void InsertData(SqlConnection sqlConn, List<KnownForTitle> knownForTitles)
-        {
-            foreach(KnownForTitle knownForTitle in knownForTitles)
-            {
-                SqlCommand sqlCmd = new("INSERT INTO [dbo].[KnownForTitles]" +
-                    "([nconst],[tconst])VALUES " +
-                    $"('{knownForTitle.nconst}','{knownForTitle.tconst}')", sqlConn);
-
+                SqlCommand sqlCmd = new("INSERT INTO [dbo].[PrimaryProfessions]" +
+                    "([nconst],[professionID])VALUES " +
+                    $"('{primaryProfession.nconst}',{primaryProfession.professionID})", sqlConn);
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -98,6 +68,27 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Primary professions have been inserted");
+        }
+        public void InsertData(SqlConnection sqlConn, List<KnownForTitle> knownForTitles)
+        {
+            foreach (KnownForTitle knownForTitle in knownForTitles)
+            {
+                SqlCommand sqlCmd = new("INSERT INTO [dbo].[KnownForTitles]" +
+                    "([nconst],[tconst])VALUES " +
+                    $"('{knownForTitle.nconst}','{knownForTitle.tconst}')", sqlConn);
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
+                }
+            }
+            Console.WriteLine("Known for titles have been inserted");
         }
     }
 }

@@ -37,6 +37,7 @@ namespace IMDBConsole.titleActions
             bulkCopy.DestinationTableName = "Titles";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(titlesTable);
+            Console.WriteLine("Titles have been inserted.");
         }
 
         public void InsertData(SqlConnection sqlConn, List<Genre> genres)
@@ -68,6 +69,7 @@ namespace IMDBConsole.titleActions
             bulkCopy.DestinationTableName = "Genres";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(genresTable);
+            Console.WriteLine("Genres have been inserted.");
         }
 
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
@@ -79,24 +81,16 @@ namespace IMDBConsole.titleActions
 
             foreach (TitleGenre titleGenre in titleGenres)
             {
-                int genreID = f.GetID("genreID", "Genres", "genreName", titleGenre.genreName, sqlConn);
-
-                if (genreID != -1)
-                {
-                    DataRow titleGenreRow = titleGenresTable.NewRow();
-                    f.FillParameterBulked(titleGenreRow, "tconst", titleGenre.tconst);
-                    f.FillParameterBulked(titleGenreRow, "genreID", genreID);
-                    titleGenresTable.Rows.Add(titleGenreRow);
-                }
-                else
-                {
-                    Console.WriteLine($"Genre '{titleGenre.genreName}' not found.");
-                }
+                DataRow titleGenreRow = titleGenresTable.NewRow();
+                f.FillParameterBulked(titleGenreRow, "tconst", titleGenre.tconst);
+                f.FillParameterBulked(titleGenreRow, "genreID", titleGenre.genreID);
+                titleGenresTable.Rows.Add(titleGenreRow);
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
             bulkCopy.DestinationTableName = "TitlesGenres";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(titleGenresTable);
+            Console.WriteLine("TitleGenres have been inserted.");
         }
     }
 }

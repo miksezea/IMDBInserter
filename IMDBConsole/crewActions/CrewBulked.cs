@@ -1,5 +1,4 @@
-﻿using IMDBLib.nameBasics;
-using IMDBLib.titleCrew;
+﻿using IMDBLib.titleCrew;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -27,6 +26,7 @@ namespace IMDBConsole.crewActions
             bulkCopy.DestinationTableName = "KnownForTitles";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(directorsTable);
+            Console.WriteLine("Directors have been inserted.");
         }
 
         public void InsertData(SqlConnection sqlConn, List<Writer> writers)
@@ -47,6 +47,7 @@ namespace IMDBConsole.crewActions
             bulkCopy.DestinationTableName = "KnownForTitles";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(writersTable);
+            Console.WriteLine("Writers have been inserted.");
         }
     }
 }

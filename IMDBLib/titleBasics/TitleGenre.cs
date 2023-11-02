@@ -3,12 +3,12 @@
     public class TitleGenre
     {
         public string tconst { get; set; }
-        public string genreName { get; set; }
+        public int genreID { get; set; }
 
-        public TitleGenre(string tconst, string genreName)
+        public TitleGenre(string tconst, int genreID)
         {
             this.tconst = tconst;
-            this.genreName = genreName;
+            this.genreID = genreID;
         }
     }
 }

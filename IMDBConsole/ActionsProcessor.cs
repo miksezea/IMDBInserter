@@ -1,6 +1,6 @@
-﻿using IMDBConsole.nameActions;
+﻿using IMDBConsole.crewActions;
+using IMDBConsole.nameActions;
 using IMDBConsole.titleActions;
-using IMDBConsole.crewActions;
 using System.Data.SqlClient;
 
 namespace IMDBConsole

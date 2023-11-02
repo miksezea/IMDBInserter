@@ -26,6 +26,7 @@ namespace IMDBConsole.crewActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Directors have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<Writer> writers)
         {
@@ -46,6 +47,7 @@ namespace IMDBConsole.crewActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Writers have been inserted.");
         }
     }
 }

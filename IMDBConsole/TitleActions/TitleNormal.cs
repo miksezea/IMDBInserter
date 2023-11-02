@@ -3,12 +3,12 @@ using System.Data.SqlClient;
 
 namespace IMDBConsole.titleActions
 {
-    public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre> 
+    public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
         readonly GlobalFunctions f = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
-            foreach (Title title in titles) 
+            foreach (Title title in titles)
             {
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Titles]" +
                     "([tconst],[titleType],[primaryTitle],[originalTitle]," +
@@ -21,69 +21,58 @@ namespace IMDBConsole.titleActions
                     $"{f.CheckIntForNull(title.startYear)}," +
                     $"{f.CheckIntForNull(title.endYear)}," +
                     $"{f.CheckIntForNull(title.runtimeMinutes)})", sqlConn);
-
-                try 
+                try
                 {
                     sqlCmd.ExecuteNonQuery();
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     Console.WriteLine(sqlCmd.CommandText);
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Titles have been inserted.");
         }
-
-        public void InsertData(SqlConnection sqlConn, List<Genre> genres) 
+        public void InsertData(SqlConnection sqlConn, List<Genre> genres)
         {
-            foreach (Genre genre in genres) 
+            foreach (Genre genre in genres)
             {
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Genres]" +
                     "([genreName])VALUES " +
                     $"('{genre.genreName}')", sqlConn);
-
-                try 
+                try
                 {
                     sqlCmd.ExecuteNonQuery();
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     Console.WriteLine(sqlCmd.CommandText);
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Genres have been inserted.");
         }
-
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
         {
-            foreach (TitleGenre titleGenre in titleGenres) 
+            foreach (TitleGenre titleGenre in titleGenres)
             {
-                int genreID = f.GetID("genreID", "Genres", "genreName", titleGenre.genreName, sqlConn);
-
-                if (genreID != -1) 
+                SqlCommand sqlCmd = new("INSERT INTO [dbo].[TitlesGenres]" +
+                    "([tconst],[genreID])VALUES " +
+                    $"('{titleGenre.tconst}',{titleGenre.genreID})", sqlConn);
+                try
                 {
-                    SqlCommand sqlCmd = new("INSERT INTO [dbo].[TitlesGenres]" +
-                        "([tconst],[genreID])VALUES " +
-                        $"('{titleGenre.tconst}',{genreID})", sqlConn);
-
-                    try
-                    {
-                        sqlCmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(sqlCmd.CommandText);
-                        Console.ReadKey();
-                    }
+                    sqlCmd.ExecuteNonQuery();
                 }
-                else
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Genre '{titleGenre.genreName}' not found.");
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
                 }
             }
+            Console.WriteLine("TitleGenres have been inserted.");
         }
     }
 }

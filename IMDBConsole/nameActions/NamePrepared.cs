@@ -1,5 +1,4 @@
-﻿
-using IMDBLib.nameBasics;
+﻿using IMDBLib.nameBasics;
 using System.Data.SqlClient;
 
 namespace IMDBConsole.nameActions
@@ -46,12 +45,10 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
-
-
+            Console.WriteLine("Names have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<Profession> professions)
         {
-
             SqlCommand sqlCmd = new("" +
                 "INSERT INTO [dbo].[Professions]" +
                 "([professionName])VALUES (@professionName)", sqlConn);
@@ -75,10 +72,11 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Professions have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<PrimaryProfession> primaryProfessions)
         {
-            SqlCommand sqlCmd = new("" + 
+            SqlCommand sqlCmd = new("" +
                 "INSERT INTO [dbo].[PrimaryProfessions] " +
                 "([nconst],[professionID])VALUES (@nconst, @professionID)", sqlConn);
 
@@ -92,24 +90,20 @@ namespace IMDBConsole.nameActions
 
             foreach (PrimaryProfession primaryProfession in primaryProfessions)
             {
-                int professionID = f.GetID("professionID", "Professions", "professionName", primaryProfession.professionName, sqlConn);
-
-                if (professionID != -1)
+                f.FillParameterPrepared(professionNameParameter, primaryProfession.nconst);
+                f.FillParameterPrepared(professionIDParameter, primaryProfession.professionID);
+                try
                 {
-                    f.FillParameterPrepared(professionNameParameter, primaryProfession.nconst);
-                    f.FillParameterPrepared(professionIDParameter, professionID);
-                    try
-                    {
-                        sqlCmd.ExecuteNonQuery();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine(sqlCmd.CommandText);
-                        Console.ReadKey();
-                    }
+                    sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
                 }
             }
+            Console.WriteLine("Primary professions have been inserted.");
         }
         public void InsertData(SqlConnection sqlConn, List<KnownForTitle> knownForTitles)
         {
@@ -140,6 +134,7 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
+            Console.WriteLine("Known for titles have been inserted.");
         }
     }
 }
