@@ -23,7 +23,7 @@ namespace IMDBConsole.crewActions
                 directorsTable.Rows.Add(directorsRow);
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
-            bulkCopy.DestinationTableName = "KnownForTitles";
+            bulkCopy.DestinationTableName = "Directors";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(directorsTable);
             Console.WriteLine("Directors have been inserted.");
@@ -31,7 +31,7 @@ namespace IMDBConsole.crewActions
 
         public void InsertData(SqlConnection sqlConn, List<Writer> writers)
         {
-            DataTable writersTable = new("KnownForTitles");
+            DataTable writersTable = new("Writers");
 
             writersTable.Columns.Add("nconst", typeof(string));
             writersTable.Columns.Add("tconst", typeof(string));
@@ -44,7 +44,7 @@ namespace IMDBConsole.crewActions
                 writersTable.Rows.Add(writersRow);
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
-            bulkCopy.DestinationTableName = "KnownForTitles";
+            bulkCopy.DestinationTableName = "Writers";
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(writersTable);
             Console.WriteLine("Writers have been inserted.");
