@@ -63,7 +63,7 @@ namespace IMDBConsole.nameActions
             DateTime after = DateTime.Now;
             TimeSpan ts = after - before;
 
-            Console.WriteLine($"Time taken: {ts}" );
+            Console.WriteLine($"Time taken: {ts}");
         }
 
         public void MakeLists()
