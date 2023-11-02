@@ -71,7 +71,7 @@ namespace IMDBConsole.nameActions
 
             foreach (PrimaryProfession primaryProfession in primaryProfessions)
             {
-                int professionID = f.GetID("professionÍD", "Professions", "professionName", primaryProfession.professionName, sqlConn);
+                int professionID = f.GetID("professionID", "Professions", "professionName", primaryProfession.professionName, sqlConn);
 
                 if (professionID != -1)
                 {

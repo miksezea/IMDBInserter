@@ -12,6 +12,7 @@ namespace IMDBConsole.crewActions
             Console.WriteLine("Which Table do you want to check?");
             Console.WriteLine("1: Directors");
             Console.WriteLine("2: Writers");
+            Console.WriteLine("3: Go back");
 
             string? input = Console.ReadLine();
 
@@ -24,6 +25,11 @@ namespace IMDBConsole.crewActions
                 case "2":
                     Console.Clear();
                     f.CountTable("Writers", sqlConn);
+                    break;
+                case "3":
+                    Console.Clear();
+                    ActionsProcessor ap = new();
+                    ap.DatasetSelector("Title.Crew");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
@@ -39,6 +45,7 @@ namespace IMDBConsole.crewActions
             Console.WriteLine("1: Directors");
             Console.WriteLine("2: Writers");
             Console.WriteLine("3: Both");
+            Console.WriteLine("4: Go back");
 
             string? input = Console.ReadLine();
 
@@ -56,6 +63,11 @@ namespace IMDBConsole.crewActions
                     Console.Clear();
                     f.DeleteRows("Directors", sqlConn);
                     f.DeleteRows("Writers", sqlConn);
+                    break;
+                case "4":
+                    Console.Clear();
+                    ActionsProcessor ap = new();
+                    ap.DatasetSelector("Title.Crew");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");

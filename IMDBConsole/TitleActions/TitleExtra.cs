@@ -13,6 +13,7 @@ namespace IMDBConsole.titleActions
             Console.WriteLine("1: Titles");
             Console.WriteLine("2: Genres");
             Console.WriteLine("3: TitlesGenres");
+            Console.WriteLine("4: Go back");
 
             string? input = Console.ReadLine();
 
@@ -30,6 +31,11 @@ namespace IMDBConsole.titleActions
                     Console.Clear();
                     f.CountTable("TitlesGenres", sqlConn);
                     break;
+                case "4":
+                    Console.Clear();
+                    ActionsProcessor ap = new();
+                    ap.DatasetSelector("Title.Basics");
+                    break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
                     Console.WriteLine();
@@ -46,6 +52,7 @@ namespace IMDBConsole.titleActions
             Console.WriteLine("2: Genres");
             Console.WriteLine("3: TitlesGenres");
             Console.WriteLine("4: All of the above");
+            Console.WriteLine("5: Go back");
 
             string? input = Console.ReadLine();
 
@@ -74,6 +81,11 @@ namespace IMDBConsole.titleActions
 
                     SqlCommand reseedCmd2 = new("DBCC CHECKIDENT ('Genres', RESEED, 0)", _sqlConn);
                     reseedCmd2.ExecuteNonQuery();
+                    break;
+                case "5":
+                    Console.Clear();
+                    ActionsProcessor ap = new();
+                    ap.DatasetSelector("Title.Basics");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");

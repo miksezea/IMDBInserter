@@ -6,8 +6,8 @@ namespace IMDBConsole.nameActions
     public class NameInserter
     {
         readonly List<Name> names = new();
-        readonly List<PrimaryProfession> primaryProfessions = new();
         readonly List<Profession> professions = new();
+        readonly List<PrimaryProfession> primaryProfessions = new();
         readonly List<KnownForTitle> knownForTitles = new();
         int _lineAmount = 0;
         string _path = "";
@@ -28,34 +28,34 @@ namespace IMDBConsole.nameActions
             MakeLists();
 
             IInserter<Name>? nameInsert = null;
-            IInserter<PrimaryProfession>? primaryProfessionInsert = null;
             IInserter<Profession>? professionInsert = null;
+            IInserter<PrimaryProfession>? primaryProfessionInsert = null;
             IInserter<KnownForTitle>? knownForTitleInsert = null;
 
             switch (inserterType)
             {
                 case 1:
                     nameInsert = new NameNormal();
-                    primaryProfessionInsert = new NameNormal();
                     professionInsert = new NameNormal();
+                    primaryProfessionInsert = new NameNormal();
                     knownForTitleInsert = new NameNormal();
                     break;
                 case 2:
                     nameInsert = new NamePrepared();
-                    primaryProfessionInsert = new NamePrepared();
                     professionInsert = new NamePrepared();
+                    primaryProfessionInsert = new NamePrepared();
                     knownForTitleInsert = new NamePrepared();
                     break;
                 case 3:
                     nameInsert = new NameBulked();
+                    professionInsert = new NamePrepared();
                     primaryProfessionInsert = new NameBulked();
-                    professionInsert = new NameBulked();
                     knownForTitleInsert = new NameBulked();
                     break;
             }
             nameInsert?.InsertData(sqlConn, names);
-            primaryProfessionInsert?.InsertData(sqlConn, primaryProfessions);
             professionInsert?.InsertData(sqlConn, professions);
+            primaryProfessionInsert?.InsertData(sqlConn, primaryProfessions);
             knownForTitleInsert?.InsertData(sqlConn, knownForTitles);
 
             sqlConn.Close();

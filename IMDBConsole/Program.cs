@@ -12,6 +12,7 @@
             Console.WriteLine("3: Title Crew");
             Console.WriteLine("4: Title Akas (NOT IMPLEMENTED)");
             Console.WriteLine("5: Title Principals (NOT IMPLEMENTED)");
+            Console.WriteLine("6: Close program");
 
             string? input = Console.ReadLine();
 
@@ -36,6 +37,9 @@
                 case "5":
                     Console.Clear();
                     processor.DatasetSelector("Title.Principals");
+                    break;
+                case "6":
+                    Environment.Exit(0);
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");

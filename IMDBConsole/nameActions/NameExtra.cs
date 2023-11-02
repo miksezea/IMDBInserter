@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using IMDBConsole;
+using System.Data.SqlClient;
 
 namespace IMDBConsole.nameActions
 {
@@ -14,6 +15,7 @@ namespace IMDBConsole.nameActions
             Console.WriteLine("2: KnownForTitles");
             Console.WriteLine("3: PrimaryProfessions");
             Console.WriteLine("4: Professions");
+            Console.WriteLine("5: Go Back");
 
             string? input = Console.ReadLine();
 
@@ -35,6 +37,11 @@ namespace IMDBConsole.nameActions
                     Console.Clear();
                     f.CountTable("Professions", sqlConn);
                     break;
+                case "5":
+                    Console.Clear();
+                    ActionsProcessor ap = new();
+                    ap.DatasetSelector("Name.Basics");
+                    break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
                     Console.WriteLine();
@@ -51,6 +58,7 @@ namespace IMDBConsole.nameActions
             Console.WriteLine("3: PrimaryProfessions");
             Console.WriteLine("4: Professions");
             Console.WriteLine("5: All of the above");
+            Console.WriteLine("6: Go Back");
 
             string? input = Console.ReadLine();
 
@@ -84,6 +92,11 @@ namespace IMDBConsole.nameActions
 
                     SqlCommand reseedCmd2 = new("DBCC CHECKIDENT ('Professions', RESEED, 0)", _sqlConn);
                     reseedCmd2.ExecuteNonQuery();
+                    break;
+                case "6":
+                    Console.Clear();
+                    ActionsProcessor ap = new();
+                    ap.DatasetSelector("Name.Basics");
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
