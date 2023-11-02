@@ -50,35 +50,29 @@ namespace IMDBConsole
                 return -1;
             }
         }
-        public bool CheckForTconst(string tconst, SqlConnection sqlConn)
+        public void TconstFromDBToList(List<string> tconstList, SqlConnection sqlConn)
         {
-            SqlCommand sqlCmd = new($"SELECT [tconst] FROM [dbo].[Titles] WHERE [tconst] = '{tconst}'", sqlConn);
-            object result = sqlCmd.ExecuteScalar();
+            SqlCommand sqlCmd = new($"SELECT [tconst] FROM [dbo].[Titles]", sqlConn);
+            SqlDataReader reader = sqlCmd.ExecuteReader();
 
-            if (result != null && result != DBNull.Value)
+            while (reader.Read())
             {
-                return true;
+                string tconst = reader.GetString(0);
+                tconstList.Add(tconst);
             }
-            else
-            {
-                // Title not found
-                return false;
-            }
+            reader.Close();
         }
-        public bool CheckForNconst(string nconst, SqlConnection sqlConn)
+        public void NconstFromDBToList(List<string> nconstList, SqlConnection sqlConn)
         {
-            SqlCommand sqlCmd = new($"SELECT [nconst] FROM [dbo].[Names] WHERE [nconst] = '{nconst}'", sqlConn);
-            object result = sqlCmd.ExecuteScalar();
+            SqlCommand sqlCmd = new($"SELECT [nconst] FROM [dbo].[Names]", sqlConn);
+            SqlDataReader reader = sqlCmd.ExecuteReader();
 
-            if (result != null && result != DBNull.Value)
+            while (reader.Read())
             {
-                return true;
+                string nconst = reader.GetString(0);
+                nconstList.Add(nconst);
             }
-            else
-            {
-                // Name not found
-                return false;
-            }
+            reader.Close();
         }
 
         public bool ConvertToBool(string input)
@@ -118,18 +112,6 @@ namespace IMDBConsole
         public string ConvertToSqlString(string input)
         {
             return input.Replace("'", "''");
-        }
-
-        public string? ConvertToString(string input)
-        {
-            if (input == @"\N")
-            {
-                return null;
-            }
-            else
-            {
-                return input;
-            }
         }
 
         public void FillParameterPrepared(SqlParameter parameter, object? value)

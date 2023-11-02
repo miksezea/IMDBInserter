@@ -1,4 +1,4 @@
-﻿using IMDBLib.titleCrew;
+﻿    using IMDBLib.titleCrew;
 using System.Data.SqlClient;
 
 namespace IMDBConsole.crewActions
@@ -48,14 +48,16 @@ namespace IMDBConsole.crewActions
             DateTime after = DateTime.Now;
             TimeSpan ts = after - before;
             Console.WriteLine($"Time taken: {ts}");
-            Console.WriteLine();
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
         }
 
         public void MakeLists()
         {
+            List<string> tconsts = new();
+            List<string> nconsts = new();
+
+            f.TconstFromDBToList(tconsts, sqlConn);
+            f.NconstFromDBToList(nconsts, sqlConn);
+
             IEnumerable<string> lines = File.ReadLines(_path).Skip(1);
             if (_lineAmount != 0)
             {
@@ -68,8 +70,7 @@ namespace IMDBConsole.crewActions
 
                 if (values.Length == 3)
                 {
-                    bool tconstExists = f.CheckForTconst(values[0], sqlConn);
-                    if (tconstExists)
+                    if (tconsts.Contains(values[0]))
                     {
                         // Directors table
                         if (values[1] != @"\N")
@@ -78,8 +79,7 @@ namespace IMDBConsole.crewActions
 
                             foreach (string director in directors)
                             {
-                                bool nconstExists = f.CheckForNconst(director, sqlConn);
-                                if (nconstExists)
+                                if (nconsts.Contains(director))
                                 {
                                     this.directors.Add(new Director(director, values[0]));
                                 }
@@ -93,8 +93,7 @@ namespace IMDBConsole.crewActions
 
                             foreach (string writer in writers)
                             {
-                                bool nconstExists = f.CheckForNconst(writer, sqlConn);
-                                if (nconstExists)
+                                if (nconsts.Contains(writer))
                                 {
                                     this.writers.Add(new Writer(writer, values[0]));
                                 }

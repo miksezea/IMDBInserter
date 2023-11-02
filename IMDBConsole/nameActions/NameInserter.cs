@@ -61,12 +61,16 @@ namespace IMDBConsole.nameActions
             sqlConn.Close();
 
             DateTime after = DateTime.Now;
+            TimeSpan ts = after - before;
 
-            Console.WriteLine("Tid: " + (after - before));
+            Console.WriteLine($"Time taken: {ts}" );
         }
 
         public void MakeLists()
         {
+            List<string> tconsts = new();
+            f.TconstFromDBToList(tconsts, sqlConn);
+
             IEnumerable<string> lines = File.ReadLines(_path).Skip(1);
             if (_lineAmount != 0)
             {
@@ -117,8 +121,7 @@ namespace IMDBConsole.nameActions
 
                         foreach (string knownForTitle in knownForTitles)
                         {
-                            bool tconstExists = f.CheckForTconst(knownForTitle, sqlConn);
-                            if (tconstExists)
+                            if (tconsts.Contains(knownForTitle))
                             {
                                 this.knownForTitles.Add(new KnownForTitle(values[0], knownForTitle));
                             }

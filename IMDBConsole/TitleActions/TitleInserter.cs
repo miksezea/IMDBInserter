@@ -54,8 +54,9 @@ namespace IMDBConsole.titleActions
             sqlConn.Close();
 
             DateTime after = DateTime.Now;
+            TimeSpan ts = after - before;
 
-            Console.WriteLine("Tid: " + (after - before));
+            Console.WriteLine($"Time taken: {ts}");
         }
 
         public void MakeLists()
