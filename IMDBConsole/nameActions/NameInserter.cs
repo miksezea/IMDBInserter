@@ -80,12 +80,12 @@ namespace IMDBConsole.nameActions
                 if (values.Length == 6)
                 {
                     // Name table
-                    names.Add(new Name(values[0], values[2], f.ConvertToInt(values[3]), f.ConvertToInt(values[4])));
+                    names.Add(new Name(values[0], values[1], f.ConvertToInt(values[2]), f.ConvertToInt(values[3])));
 
                     // Professions table and PrimaryProfessions table
-                    if (values[5] != @"\N")
+                    if (values[4] != @"\N")
                     {
-                        string[] professionNames = values[8].Split(",");
+                        string[] professionNames = values[4].Split(",");
 
                         foreach (string professionName in professionNames)
                         {
@@ -112,9 +112,9 @@ namespace IMDBConsole.nameActions
                     }
 
                     // KnownForTitles table
-                    if (values[6] != @"\N")
+                    if (values[5] != @"\N")
                     {
-                        string[] knownForTitles = values[6].Split(",");
+                        string[] knownForTitles = values[5].Split(",");
 
                         foreach (string knownForTitle in knownForTitles)
                         {

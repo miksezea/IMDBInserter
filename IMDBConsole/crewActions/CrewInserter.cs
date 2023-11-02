@@ -72,9 +72,9 @@ namespace IMDBConsole.crewActions
                     if (tconstExists)
                     {
                         // Directors table
-                        if (values[2] != @"\N")
+                        if (values[1] != @"\N")
                         {
-                            string[] directors = values[2].Split(",");
+                            string[] directors = values[1].Split(",");
 
                             foreach (string director in directors)
                             {
@@ -86,9 +86,10 @@ namespace IMDBConsole.crewActions
                             }
                         }
 
-                        if (values[3] != @"\N")
+                        // Writers table
+                        if (values[2] != @"\N")
                         {
-                            string[] writers = values[3].Split(",");
+                            string[] writers = values[2].Split(",");
 
                             foreach (string writer in writers)
                             {
