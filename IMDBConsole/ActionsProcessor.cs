@@ -154,6 +154,12 @@ namespace IMDBConsole
             {
                 lineAmount = Convert.ToInt32(input);
             }
+            if (lineAmount < 0)
+            {
+                Console.WriteLine("Negative numbers are not allowed");
+                Console.WriteLine();
+                InsertData(inserterType);
+            }
 
             switch (_tsv)
             {

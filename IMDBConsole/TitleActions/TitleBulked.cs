@@ -38,7 +38,7 @@ namespace IMDBConsole.titleActions
             bulkCopy.BulkCopyTimeout = 0;
             bulkCopy.WriteToServer(titlesTable);
         }
-        // This function only sends the very first genre. I want it to send all genres.
+
         public void InsertData(SqlConnection sqlConn, List<Genre> genres)
         {
             int genreID = f.GetMaxId("genreID", "Genres", sqlConn);

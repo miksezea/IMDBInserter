@@ -58,7 +58,6 @@ namespace IMDBConsole.nameActions
 
                 if (professionID != -1)
                 {
-                    // Insert the data into the PrimaryProfessions table
                     SqlCommand sqlCmd = new("INSERT INTO [dbo].[PrimaryProfessions]" +
                         "([nconst],[professionID])VALUES " +
                         $"('{primaryProfession.nconst}',{professionID})", sqlConn);

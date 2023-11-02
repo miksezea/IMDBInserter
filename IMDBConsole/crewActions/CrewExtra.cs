@@ -64,6 +64,5 @@ namespace IMDBConsole.crewActions
                     break;
             }
         }
-
     }
 }

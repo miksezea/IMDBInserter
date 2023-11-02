@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using System.Runtime.CompilerServices;
 
 namespace IMDBConsole
 {
@@ -52,7 +53,7 @@ namespace IMDBConsole
         }
         public bool CheckForTconst(string tconst, SqlConnection sqlConn)
         {
-            SqlCommand sqlCmd = new($"SELECT [nconst] FROM [dbo].[Titles] WHERE [tconst] = '{tconst}'", sqlConn);
+            SqlCommand sqlCmd = new($"SELECT [tconst] FROM [dbo].[Titles] WHERE [tconst] = '{tconst}'", sqlConn);
             object result = sqlCmd.ExecuteScalar();
 
             if (result != null && result != DBNull.Value)
@@ -61,11 +62,25 @@ namespace IMDBConsole
             }
             else
             {
-                // Object not found
+                // Title not found
                 return false;
             }
         }
+        public bool CheckForNconst(string nconst, SqlConnection sqlConn)
+        {
+            SqlCommand sqlCmd = new($"SELECT [nconst] FROM [dbo].[Names] WHERE [nconst] = '{nconst}'", sqlConn);
+            object result = sqlCmd.ExecuteScalar();
 
+            if (result != null && result != DBNull.Value)
+            {
+                return true;
+            }
+            else
+            {
+                // Name not found
+                return false;
+            }
+        }
 
         public bool ConvertToBool(string input)
         {

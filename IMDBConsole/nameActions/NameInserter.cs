@@ -35,22 +35,22 @@ namespace IMDBConsole.nameActions
             switch (inserterType)
             {
                 case 1:
-                    //nameInsert = new NameNormal();
-                    //primaryProfessionInsert = new NameNormal();
-                    //professionInsert = new NameNormal();
-                    //knownForTitleInsert = new NameNormal();
+                    nameInsert = new NameNormal();
+                    primaryProfessionInsert = new NameNormal();
+                    professionInsert = new NameNormal();
+                    knownForTitleInsert = new NameNormal();
                     break;
                 case 2:
-                    //nameInsert = new NamePrepared();
-                    //primaryProfessionInsert = new NamePrepared();
-                    //professionInsert = new NamePrepared();
-                    //knownForTitleInsert = new NamePrepared();
+                    nameInsert = new NamePrepared();
+                    primaryProfessionInsert = new NamePrepared();
+                    professionInsert = new NamePrepared();
+                    knownForTitleInsert = new NamePrepared();
                     break;
                 case 3:
-                    //nameInsert = new NameBulked();
-                    //primaryProfessionInsert = new NameBulked();
-                    //professionInsert = new NameBulked();
-                    //knownForTitleInsert = new NameBulked();
+                    nameInsert = new NameBulked();
+                    primaryProfessionInsert = new NameBulked();
+                    professionInsert = new NameBulked();
+                    knownForTitleInsert = new NameBulked();
                     break;
             }
             nameInsert?.InsertData(sqlConn, names);
@@ -68,7 +68,7 @@ namespace IMDBConsole.nameActions
         public void MakeLists()
         {
             IEnumerable<string> lines = File.ReadLines(_path).Skip(1);
-            if (_lineAmount > 0)
+            if (_lineAmount != 0)
             {
                 lines = lines.Take(_lineAmount);
             }

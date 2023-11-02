@@ -61,7 +61,7 @@ namespace IMDBConsole.titleActions
         public void MakeLists()
         {
             IEnumerable<string> lines = File.ReadLines(_path).Skip(1);
-            if (_lineAmount > 0)
+            if (_lineAmount != 0)
             {
                 lines = lines.Take(_lineAmount);
             }

@@ -64,7 +64,6 @@ namespace IMDBConsole.titleActions
 
                 if (genreID != -1) 
                 {
-                    // Insert the data into the TitlesGenres table
                     SqlCommand sqlCmd = new("INSERT INTO [dbo].[TitlesGenres]" +
                         "([tconst],[genreID])VALUES " +
                         $"('{titleGenre.tconst}',{genreID})", sqlConn);

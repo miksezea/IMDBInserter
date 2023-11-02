@@ -1,7 +1,51 @@
-﻿
+﻿using IMDBLib.titleCrew;
+using System.Data.SqlClient;
+
 namespace IMDBConsole.crewActions
 {
-    public class CrewNormal
+    public class CrewNormal : IInserter<Director>, IInserter<Writer>
     {
+        readonly GlobalFunctions f = new();
+
+        public void InsertData(SqlConnection sqlConn, List<Director> directors)
+        {
+            foreach (Director director in directors)
+            {
+                SqlCommand sqlCmd = new("INSERT INTO [dbo].[Directors]" +
+                    "([nconst],[tconst])VALUES " +
+                    $"('{director.nconst}','{director.tconst}')", sqlConn);
+
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
+                }
+            }
+        }
+        public void InsertData(SqlConnection sqlConn, List<Writer> writers)
+        {
+            foreach (Writer writer in writers)
+            {
+                SqlCommand sqlCmd = new("INSERT INTO [dbo].[Writers]" +
+                    "([nconst],[tconst])VALUES " +
+                    $"('{writer.nconst}','{writer.tconst}')", sqlConn);
+
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(sqlCmd.CommandText);
+                    Console.ReadKey();
+                }
+            }
+        }
     }
 }
