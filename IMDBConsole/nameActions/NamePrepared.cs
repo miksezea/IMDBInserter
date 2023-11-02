@@ -10,15 +10,31 @@ namespace IMDBConsole.nameActions
 
         public void InsertData(SqlConnection sqlConn, List<Name> names)
         {
+            SqlCommand sqlCmd = new("" +
+                "INSERT INTO [dbo].[Names]" +
+                "([nconst],[primaryName],[birthYear],[deathYear])VALUES " +
+                "(@nconst, @primaryName, @birthYear, @deathYear", sqlConn);
+
+            SqlParameter nconstParameter = new("@nconst", System.Data.SqlDbType.VarChar, 10);
+            sqlCmd.Parameters.Add(nconstParameter);
+
+            SqlParameter primaryNameParameter = new("@primaryName", System.Data.SqlDbType.VarChar, 8000);
+            sqlCmd.Parameters.Add(primaryNameParameter);
+
+            SqlParameter birthYearParameter = new("@birthYear", System.Data.SqlDbType.Int);
+            sqlCmd.Parameters.Add(birthYearParameter);
+
+            SqlParameter deathYearParameter = new("@deathYear", System.Data.SqlDbType.Int);
+            sqlCmd.Parameters.Add(deathYearParameter);
+
+            sqlCmd.Prepare();
+
             foreach (Name name in names)
             {
-                SqlCommand sqlCmd = new("INSERT INTO [dbo].[Names]" +
-                    "([nconst],[primaryName],[birthYear],[deathYear])VALUES " +
-                    $"('{name.nconst}'," +
-                    $"'{f.ConvertToSqlString(name.primaryName)}'," +
-                    $"'{f.CheckIntForNull(name.birthYear)}'," +
-                    $"'{f.CheckIntForNull(name.deathYear)}'", sqlConn);
-
+                f.FillParameterPrepared(nconstParameter, name.nconst);
+                f.FillParameterPrepared(primaryNameParameter, name.primaryName);
+                f.FillParameterPrepared(birthYearParameter, name.birthYear);
+                f.FillParameterPrepared(deathYearParameter, name.deathYear);
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -30,15 +46,24 @@ namespace IMDBConsole.nameActions
                     Console.ReadKey();
                 }
             }
+
+
         }
         public void InsertData(SqlConnection sqlConn, List<Profession> professions)
         {
+
+            SqlCommand sqlCmd = new("" +
+                "INSERT INTO [dbo].[Professions]" +
+                "([professionName])VALUES (@professionName)", sqlConn);
+
+            SqlParameter professionNameParameter = new("@professionName", System.Data.SqlDbType.VarChar, 50);
+            sqlCmd.Parameters.Add(professionNameParameter);
+
+            sqlCmd.Prepare();
+
             foreach (Profession profession in professions)
             {
-                SqlCommand sqlCmd = new("INSERT INTO [dbo].[Professions]" +
-                    "([professionName])VALUES " +
-                    $"('{profession.professionName}')", sqlConn);
-
+                f.FillParameterPrepared(professionNameParameter, profession.professionName);
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -53,17 +78,26 @@ namespace IMDBConsole.nameActions
         }
         public void InsertData(SqlConnection sqlConn, List<PrimaryProfession> primaryProfessions)
         {
+            SqlCommand sqlCmd = new("" + 
+                "INSERT INTO [dbo].[PrimaryProfessions] " +
+                "([nconst],[professionID])VALUES (@nconst, @professionID)", sqlConn);
+
+            SqlParameter professionNameParameter = new("@nconst", System.Data.SqlDbType.VarChar, 10);
+            sqlCmd.Parameters.Add(professionNameParameter);
+
+            SqlParameter professionIDParameter = new("@professionID", System.Data.SqlDbType.Int);
+            sqlCmd.Parameters.Add(professionIDParameter);
+
+            sqlCmd.Prepare();
+
             foreach (PrimaryProfession primaryProfession in primaryProfessions)
             {
                 int professionID = f.GetID("professionID", "Professions", "professionName", primaryProfession.professionName, sqlConn);
 
                 if (professionID != -1)
                 {
-                    // Insert the data into the PrimaryProfessions table
-                    SqlCommand sqlCmd = new("INSERT INTO [dbo].[PrimaryProfessions]" +
-                        "([nconst],[professionID])VALUES " +
-                        $"('{primaryProfession.nconst}',{professionID})", sqlConn);
-
+                    f.FillParameterPrepared(professionNameParameter, primaryProfession.nconst);
+                    f.FillParameterPrepared(professionIDParameter, professionID);
                     try
                     {
                         sqlCmd.ExecuteNonQuery();
@@ -75,20 +109,26 @@ namespace IMDBConsole.nameActions
                         Console.ReadKey();
                     }
                 }
-                else
-                {
-                    Console.WriteLine($"Profession '{primaryProfession.professionName}' not found.");
-                }
             }
         }
         public void InsertData(SqlConnection sqlConn, List<KnownForTitle> knownForTitles)
         {
+            SqlCommand sqlCmd = new("" +
+                "INSERT INTO [dbo].[KnownForTitles] " +
+                "([nconst],[tconst])VALUES (@nconst, @tconst)", sqlConn);
+
+            SqlParameter nconstParameter = new("@nconst", System.Data.SqlDbType.VarChar, 10);
+            sqlCmd.Parameters.Add(nconstParameter);
+
+            SqlParameter tconstParameter = new("@tconst", System.Data.SqlDbType.VarChar, 10);
+            sqlCmd.Parameters.Add(tconstParameter);
+
+            sqlCmd.Prepare();
+
             foreach (KnownForTitle knownForTitle in knownForTitles)
             {
-                SqlCommand sqlCmd = new("INSERT INTO [dbo].[KnownForTitles]" +
-                    "([nconst],[tconst])VALUES " +
-                    $"('{knownForTitle.nconst}','{knownForTitle.tconst}')", sqlConn);
-
+                f.FillParameterPrepared(nconstParameter, knownForTitle.nconst);
+                f.FillParameterPrepared(tconstParameter, knownForTitle.tconst);
                 try
                 {
                     sqlCmd.ExecuteNonQuery();

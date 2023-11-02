@@ -6,7 +6,7 @@ namespace IMDBConsole.titleActions
     public class TitlePrepared : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
         readonly GlobalFunctions f = new();
-        readonly TitleExtra e = new();
+
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
             SqlCommand sqlCmd = new("" +

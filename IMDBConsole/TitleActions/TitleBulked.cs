@@ -7,23 +7,22 @@ namespace IMDBConsole.titleActions
     public class TitleBulked : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
         readonly GlobalFunctions f = new();
-        readonly TitleExtra e = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
-            DataTable titleTable = new("Titles");
+            DataTable titlesTable = new("Titles");
 
-            titleTable.Columns.Add("tconst", typeof(string));
-            titleTable.Columns.Add("titleType", typeof(string));
-            titleTable.Columns.Add("primaryTitle", typeof(string));
-            titleTable.Columns.Add("originalTitle", typeof(string));
-            titleTable.Columns.Add("isAdult", typeof(bool));
-            titleTable.Columns.Add("startYear", typeof(int));
-            titleTable.Columns.Add("endYear", typeof(int));
-            titleTable.Columns.Add("runtimeMinutes", typeof(int));
+            titlesTable.Columns.Add("tconst", typeof(string));
+            titlesTable.Columns.Add("titleType", typeof(string));
+            titlesTable.Columns.Add("primaryTitle", typeof(string));
+            titlesTable.Columns.Add("originalTitle", typeof(string));
+            titlesTable.Columns.Add("isAdult", typeof(bool));
+            titlesTable.Columns.Add("startYear", typeof(int));
+            titlesTable.Columns.Add("endYear", typeof(int));
+            titlesTable.Columns.Add("runtimeMinutes", typeof(int));
 
             foreach (Title title in titles)
             {
-                DataRow titleRow = titleTable.NewRow();
+                DataRow titleRow = titlesTable.NewRow();
                 f.FillParameterBulked(titleRow, "tconst", title.tconst);
                 f.FillParameterBulked(titleRow, "titleType", title.titleType);
                 f.FillParameterBulked(titleRow, "primaryTitle", title.primaryTitle);
@@ -32,12 +31,12 @@ namespace IMDBConsole.titleActions
                 f.FillParameterBulked(titleRow, "startYear", title.startYear);
                 f.FillParameterBulked(titleRow, "endYear", title.endYear);
                 f.FillParameterBulked(titleRow, "runtimeMinutes", title.runtimeMinutes);
-                titleTable.Rows.Add(titleRow);
+                titlesTable.Rows.Add(titleRow);
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
             bulkCopy.DestinationTableName = "Titles";
             bulkCopy.BulkCopyTimeout = 0;
-            bulkCopy.WriteToServer(titleTable);
+            bulkCopy.WriteToServer(titlesTable);
         }
         // This function only sends the very first genre. I want it to send all genres.
         public void InsertData(SqlConnection sqlConn, List<Genre> genres)
@@ -52,31 +51,31 @@ namespace IMDBConsole.titleActions
                 genreID++;
             }
 
-            DataTable genreTable = new("Genres");
+            DataTable genresTable = new("Genres");
 
-            genreTable.Columns.Add("genreID", typeof(int));
-            genreTable.Columns.Add("genreName", typeof(string));
+            genresTable.Columns.Add("genreID", typeof(int));
+            genresTable.Columns.Add("genreName", typeof(string));
 
             foreach (Genre genre in genres)
             {
-                DataRow genreRow = genreTable.NewRow();
+                DataRow genreRow = genresTable.NewRow();
                 f.FillParameterBulked(genreRow, "genreID", genreID);
                 f.FillParameterBulked(genreRow, "genreName", genre.genreName);
-                genreTable.Rows.Add(genreRow);
+                genresTable.Rows.Add(genreRow);
                 genreID++;
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
             bulkCopy.DestinationTableName = "Genres";
             bulkCopy.BulkCopyTimeout = 0;
-            bulkCopy.WriteToServer(genreTable);
+            bulkCopy.WriteToServer(genresTable);
         }
 
         public void InsertData(SqlConnection sqlConn, List<TitleGenre> titleGenres)
         {
-            DataTable titleGenreTable = new("TitlesGenres");
+            DataTable titleGenresTable = new("TitlesGenres");
 
-            titleGenreTable.Columns.Add("tconst", typeof(string));
-            titleGenreTable.Columns.Add("genreID", typeof(int));
+            titleGenresTable.Columns.Add("tconst", typeof(string));
+            titleGenresTable.Columns.Add("genreID", typeof(int));
 
             foreach (TitleGenre titleGenre in titleGenres)
             {
@@ -84,10 +83,10 @@ namespace IMDBConsole.titleActions
 
                 if (genreID != -1)
                 {
-                    DataRow titleGenreRow = titleGenreTable.NewRow();
+                    DataRow titleGenreRow = titleGenresTable.NewRow();
                     f.FillParameterBulked(titleGenreRow, "tconst", titleGenre.tconst);
                     f.FillParameterBulked(titleGenreRow, "genreID", genreID);
-                    titleGenreTable.Rows.Add(titleGenreRow);
+                    titleGenresTable.Rows.Add(titleGenreRow);
                 }
                 else
                 {
@@ -97,7 +96,7 @@ namespace IMDBConsole.titleActions
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
             bulkCopy.DestinationTableName = "TitlesGenres";
             bulkCopy.BulkCopyTimeout = 0;
-            bulkCopy.WriteToServer(titleGenreTable);
+            bulkCopy.WriteToServer(titleGenresTable);
         }
     }
 }
