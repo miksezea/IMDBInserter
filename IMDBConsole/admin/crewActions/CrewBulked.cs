@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.crewActions
+namespace IMDBConsole.admin.crewActions
 {
     public class CrewBulked : IInserter<Director>, IInserter<Writer>
     {

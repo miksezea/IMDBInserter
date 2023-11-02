@@ -1,7 +1,8 @@
-﻿using IMDBLib.titleBasics;
+﻿using IMDBConsole.titleActions;
+using IMDBLib.titleBasics;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.titleActions
+namespace IMDBConsole.admin.titleActions
 {
     public class TitleInserter
     {

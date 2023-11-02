@@ -1,7 +1,8 @@
-﻿using IMDBLib.titleCrew;
+﻿using IMDBConsole.crewActions;
+using IMDBLib.titleCrew;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.crewActions
+namespace IMDBConsole.admin.crewActions
 {
     public class CrewInserter
     {

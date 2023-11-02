@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace IMDBConsole.crewActions
+namespace IMDBConsole.admin.crewActions
 {
     public class CrewExtra
     {

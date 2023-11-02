@@ -1,18 +1,17 @@
-﻿namespace IMDBConsole
+﻿using IMDBConsole.admin;
+
+namespace IMDBConsole
 {
     public static class Program
     {
         public static void Main(string[]? args)
         {
-            ActionsProcessor processor = new();
-            Console.WriteLine("Select dataset:");
-
-            Console.WriteLine("1: Title Basics");
-            Console.WriteLine("2: Name Basics");
-            Console.WriteLine("3: Title Crew");
-            Console.WriteLine("4: Title Akas (NOT IMPLEMENTED)");
-            Console.WriteLine("5: Title Principals (NOT IMPLEMENTED)");
-            Console.WriteLine("6: Close program");
+            Console.WriteLine("Welcome to IMDB Console");
+            Console.WriteLine();
+            Console.WriteLine("Select action:");
+            Console.WriteLine("1: Admin");
+            Console.WriteLine("2: User");
+            Console.WriteLine("3: Close program");
 
             string? input = Console.ReadLine();
 
@@ -20,25 +19,16 @@
             {
                 case "1":
                     Console.Clear();
-                    processor.DatasetSelector("Title.Basics");
+                    AdminActions admin = new();
+                    admin.AdminMenu();
                     break;
-                case "2":
+                case "2": //TODO: Implement user actions
                     Console.Clear();
-                    processor.DatasetSelector("Name.Basics");
+                    //UserActions user = new();
+                    //user.UserMenu();
+                    Main(null);
                     break;
                 case "3":
-                    Console.Clear();
-                    processor.DatasetSelector("Title.Crew");
-                    break;
-                case "4":
-                    Console.Clear();
-                    processor.DatasetSelector("Title.Akas");
-                    break;
-                case "5":
-                    Console.Clear();
-                    processor.DatasetSelector("Title.Principals");
-                    break;
-                case "6":
                     Environment.Exit(0);
                     break;
                 default:

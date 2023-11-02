@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.nameActions
+namespace IMDBConsole.admin.nameActions
 {
     public class NameBulked : IInserter<Name>, IInserter<Profession>,
         IInserter<PrimaryProfession>, IInserter<KnownForTitle>

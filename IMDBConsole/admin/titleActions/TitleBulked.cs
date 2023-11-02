@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.titleActions
+namespace IMDBConsole.admin.titleActions
 {
     public class TitleBulked : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {

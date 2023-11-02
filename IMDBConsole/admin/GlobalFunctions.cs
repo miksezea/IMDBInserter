@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 
-namespace IMDBConsole
+namespace IMDBConsole.admin
 {
     public class GlobalFunctions
     {

@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace IMDBConsole
+namespace IMDBConsole.admin
 {
     public interface IInserter<T>
     {

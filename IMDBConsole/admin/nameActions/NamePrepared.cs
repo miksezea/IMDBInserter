@@ -1,7 +1,7 @@
 ﻿using IMDBLib.nameBasics;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.nameActions
+namespace IMDBConsole.admin.nameActions
 {
     public class NamePrepared : IInserter<Name>, IInserter<Profession>, IInserter<PrimaryProfession>, IInserter<KnownForTitle>
     {

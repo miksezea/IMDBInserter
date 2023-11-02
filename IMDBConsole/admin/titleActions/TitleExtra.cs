@@ -1,6 +1,6 @@
 ﻿using System.Data.SqlClient;
 
-namespace IMDBConsole.titleActions
+namespace IMDBConsole.admin.titleActions
 {
     public class TitleExtra
     {

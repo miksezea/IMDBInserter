@@ -1,7 +1,7 @@
 ﻿using IMDBLib.titleBasics;
 using System.Data.SqlClient;
 
-namespace IMDBConsole.titleActions
+namespace IMDBConsole.admin.titleActions
 {
     public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {

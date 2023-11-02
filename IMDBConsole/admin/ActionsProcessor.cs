@@ -1,9 +1,9 @@
-﻿using IMDBConsole.crewActions;
-using IMDBConsole.nameActions;
-using IMDBConsole.titleActions;
+﻿using IMDBConsole.admin.crewActions;
+using IMDBConsole.admin.nameActions;
+using IMDBConsole.admin.titleActions;
 using System.Data.SqlClient;
 
-namespace IMDBConsole
+namespace IMDBConsole.admin
 {
     public class ActionsProcessor
     {
