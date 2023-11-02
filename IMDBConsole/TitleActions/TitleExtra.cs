@@ -5,6 +5,7 @@ namespace IMDBConsole.titleActions
     public class TitleExtra
     {
         SqlConnection _sqlConn = new();
+        readonly GlobalFunctions f = new();
         public void DBTitleCount(SqlConnection sqlConn)
         {
             _sqlConn = sqlConn;
@@ -19,15 +20,15 @@ namespace IMDBConsole.titleActions
             {
                 case "1":
                     Console.Clear();
-                    CountTable("Titles");
+                    f.CountTable("Titles", sqlConn);
                     break;
                 case "2":
                     Console.Clear();
-                    CountTable("Genres");
+                    f.CountTable("Genres", sqlConn);
                     break;
                 case "3":
                     Console.Clear();
-                    CountTable("TitlesGenres");
+                    f.CountTable("TitlesGenres", sqlConn);
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
@@ -35,13 +36,6 @@ namespace IMDBConsole.titleActions
                     DBTitleCount(_sqlConn);
                     break;
             }
-        }
-        private void CountTable(string table)
-        {
-            SqlCommand cmd = new($"SELECT COUNT(*) FROM {table}", _sqlConn);
-            int count = (int)cmd.ExecuteScalar();
-            Console.WriteLine($"There are {count} rows in {table}.");
-            Console.WriteLine();
         }
 
         public void DBTitleDeleteRows(SqlConnection sqlConn)
@@ -59,69 +53,33 @@ namespace IMDBConsole.titleActions
             {
                 case "1":
                     Console.Clear();
-                    DeleteRows("Titles");
+                    f.DeleteRows("Titles", sqlConn);
                     break;
                 case "2":
                     Console.Clear();
-                    DeleteRows("Genres");
+                    f.DeleteRows("Genres", sqlConn);
+
+                    SqlCommand reseedCmd = new("DBCC CHECKIDENT ('Genres', RESEED, 0)", _sqlConn);
+                    reseedCmd.ExecuteNonQuery();
                     break;
                 case "3":
                     Console.Clear();
-                    DeleteRows("TitlesGenres");
+                    f.DeleteRows("TitlesGenres", sqlConn);
                     break;
                 case "4":
                     Console.Clear();
-                    DeleteRows("TitlesGenres");
-                    DeleteRows("Titles");
-                    DeleteRows("Genres");
+                    f.DeleteRows("TitlesGenres", sqlConn);
+                    f.DeleteRows("Titles", sqlConn);
+                    f.DeleteRows("Genres", sqlConn);
+
+                    SqlCommand reseedCmd2 = new("DBCC CHECKIDENT ('Genres', RESEED, 0)", _sqlConn);
+                    reseedCmd2.ExecuteNonQuery();
                     break;
                 default:
                     Console.WriteLine($"{input} is not a valid option.");
                     Console.WriteLine();
                     DBTitleDeleteRows(_sqlConn);
                     break;
-            }
-        }
-        private void DeleteRows(string table)
-        {
-            SqlCommand cmd = new($"DELETE FROM {table}", _sqlConn);
-            cmd.ExecuteNonQuery();
-            if (table == "Genres")
-            {
-                SqlCommand reseedCmd = new("DBCC CHECKIDENT ('Genres', RESEED, 0)", _sqlConn);
-                reseedCmd.ExecuteNonQuery();
-            }
-            Console.WriteLine($"Deleted all rows in {table}.");
-            Console.WriteLine();
-        }
-        public int GetGenreMaxId(SqlConnection sqlConn)
-        {
-            SqlCommand maxCmd = new("SELECT MAX(genreID) FROM [dbo].[Genres]", sqlConn);
-            object result = maxCmd.ExecuteScalar();
-
-            if (result != null && result != DBNull.Value)
-            {
-                return (int)result;
-            }
-            else
-            {
-                // Genre not found
-                return -1;
-            }
-        }
-        public int GetGenreID(SqlConnection sqlConn, string genreName)
-        {
-            SqlCommand sqlCmd = new($"SELECT [genreID] FROM [dbo].[Genres] WHERE [genreName] = '{genreName}'", sqlConn);
-            object result = sqlCmd.ExecuteScalar();
-
-            if (result != null && result != DBNull.Value)
-            {
-                return (int)result;
-            }
-            else
-            {
-                // Genre not found
-                return -1;
             }
         }
     }

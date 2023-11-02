@@ -5,7 +5,7 @@ namespace IMDBConsole.titleActions
 {
     public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre> 
     {
-        readonly ValuesProcessor v = new();
+        readonly GlobalFunctions f = new();
         readonly TitleExtra e = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
@@ -14,10 +14,10 @@ namespace IMDBConsole.titleActions
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Titles]" +
                     "([tconst],[titleType],[primaryTitle],[originalTitle]," +
                     "[isAdult],[startYear],[endYear],[runtimeMinutes])VALUES " +
-                    $"('{title.tconst}','{title.titleType}','{v.ConvertToSqlString(title.primaryTitle)}'," +
-                    $"'{v.ConvertToSqlString(title.originalTitle)}','{title.isAdult}'," +
-                    $"{v.CheckIntForNull(title.startYear)},{v.CheckIntForNull(title.endYear)}," +
-                    $"{v.CheckIntForNull(title.runtimeMinutes)})", sqlConn);
+                    $"('{title.tconst}','{title.titleType}','{f.ConvertToSqlString(title.primaryTitle)}'," +
+                    $"'{f.ConvertToSqlString(title.originalTitle)}','{title.isAdult}'," +
+                    $"{f.CheckIntForNull(title.startYear)},{f.CheckIntForNull(title.endYear)}," +
+                    $"{f.CheckIntForNull(title.runtimeMinutes)})", sqlConn);
 
                 try 
                 {
@@ -57,7 +57,7 @@ namespace IMDBConsole.titleActions
         {
             foreach (TitleGenre titleGenre in titleGenres) 
             {
-                int genreID = e.GetGenreID(sqlConn, titleGenre.genreName);
+                int genreID = f.GetID("genreID", "Genres", "genreName", titleGenre.genreName, sqlConn);
 
                 if (genreID != -1) 
                 {

@@ -6,7 +6,7 @@ namespace IMDBConsole.titleActions
 {
     public class TitleBulked : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
-        readonly ValuesProcessor v = new();
+        readonly GlobalFunctions f = new();
         readonly TitleExtra e = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
@@ -24,14 +24,14 @@ namespace IMDBConsole.titleActions
             foreach (Title title in titles)
             {
                 DataRow titleRow = titleTable.NewRow();
-                v.FillParameterBulked(titleRow, "tconst", title.tconst);
-                v.FillParameterBulked(titleRow, "titleType", title.titleType);
-                v.FillParameterBulked(titleRow, "primaryTitle", title.primaryTitle);
-                v.FillParameterBulked(titleRow, "originalTitle", title.originalTitle);
-                v.FillParameterBulked(titleRow, "isAdult", title.isAdult);
-                v.FillParameterBulked(titleRow, "startYear", title.startYear);
-                v.FillParameterBulked(titleRow, "endYear", title.endYear);
-                v.FillParameterBulked(titleRow, "runtimeMinutes", title.runtimeMinutes);
+                f.FillParameterBulked(titleRow, "tconst", title.tconst);
+                f.FillParameterBulked(titleRow, "titleType", title.titleType);
+                f.FillParameterBulked(titleRow, "primaryTitle", title.primaryTitle);
+                f.FillParameterBulked(titleRow, "originalTitle", title.originalTitle);
+                f.FillParameterBulked(titleRow, "isAdult", title.isAdult);
+                f.FillParameterBulked(titleRow, "startYear", title.startYear);
+                f.FillParameterBulked(titleRow, "endYear", title.endYear);
+                f.FillParameterBulked(titleRow, "runtimeMinutes", title.runtimeMinutes);
                 titleTable.Rows.Add(titleRow);
             }
             SqlBulkCopy bulkCopy = new(sqlConn, SqlBulkCopyOptions.KeepNulls, null);
@@ -42,7 +42,7 @@ namespace IMDBConsole.titleActions
         // This function only sends the very first genre. I want it to send all genres.
         public void InsertData(SqlConnection sqlConn, List<Genre> genres)
         {
-            int genreID = e.GetGenreMaxId(sqlConn);
+            int genreID = f.GetMaxId("genreID", "Genres", sqlConn);
             if (genreID == -1)
             {
                 genreID = 0;
@@ -60,8 +60,8 @@ namespace IMDBConsole.titleActions
             foreach (Genre genre in genres)
             {
                 DataRow genreRow = genreTable.NewRow();
-                v.FillParameterBulked(genreRow, "genreID", genreID);
-                v.FillParameterBulked(genreRow, "genreName", genre.genreName);
+                f.FillParameterBulked(genreRow, "genreID", genreID);
+                f.FillParameterBulked(genreRow, "genreName", genre.genreName);
                 genreTable.Rows.Add(genreRow);
                 genreID++;
             }
@@ -80,13 +80,13 @@ namespace IMDBConsole.titleActions
 
             foreach (TitleGenre titleGenre in titleGenres)
             {
-                int genreID = e.GetGenreID(sqlConn, titleGenre.genreName);
+                int genreID = f.GetID("genreID", "Genres", "genreName", titleGenre.genreName, sqlConn);
 
                 if (genreID != -1)
                 {
                     DataRow titleGenreRow = titleGenreTable.NewRow();
-                    v.FillParameterBulked(titleGenreRow, "tconst", titleGenre.tconst);
-                    v.FillParameterBulked(titleGenreRow, "genreID", genreID);
+                    f.FillParameterBulked(titleGenreRow, "tconst", titleGenre.tconst);
+                    f.FillParameterBulked(titleGenreRow, "genreID", genreID);
                     titleGenreTable.Rows.Add(titleGenreRow);
                 }
                 else

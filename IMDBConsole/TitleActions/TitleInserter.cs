@@ -12,8 +12,7 @@ namespace IMDBConsole.titleActions
         string _path = "";
         SqlConnection sqlConn = new();
         readonly HashSet<string> existingGenres = new();
-        readonly ValuesProcessor v = new();
-        readonly TitleExtra e = new();
+        readonly GlobalFunctions f = new();
 
         public void InsertTitleData(string connString, int inserterType, string path, int lineAmount)
         {
@@ -75,8 +74,8 @@ namespace IMDBConsole.titleActions
                 {
                     // Titles table
                     titles.Add(new Title(values[0], values[1], values[2], values[3],
-                        v.ConvertToBool(values[4]), v.ConvertToInt(values[5]),
-                        v.ConvertToInt(values[6]), v.ConvertToInt(values[7])));
+                        f.ConvertToBool(values[4]), f.ConvertToInt(values[5]),
+                        f.ConvertToInt(values[6]), f.ConvertToInt(values[7])));
 
                     // Genres table and TitlesGenres table
                     if (values[8] != @"\N")
@@ -89,7 +88,7 @@ namespace IMDBConsole.titleActions
                             {
                                 existingGenres.Add(genreName);
 
-                                int genreID = e.GetGenreMaxId(sqlConn);
+                                int genreID = f.GetMaxId("genreID", "Genres", sqlConn);
 
                                 if (genreID == -1)
                                 {

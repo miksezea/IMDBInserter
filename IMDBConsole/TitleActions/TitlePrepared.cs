@@ -5,7 +5,7 @@ namespace IMDBConsole.titleActions
 {
     public class TitlePrepared : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
-        readonly ValuesProcessor v = new();
+        readonly GlobalFunctions f = new();
         readonly TitleExtra e = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
@@ -44,14 +44,14 @@ namespace IMDBConsole.titleActions
 
             foreach (Title title in titles)
             {
-                v.FillParameterPrepared(tconstParameter, title.tconst);
-                v.FillParameterPrepared(titleTypeParameter, title.titleType);
-                v.FillParameterPrepared(primaryTitleParameter, title.primaryTitle);
-                v.FillParameterPrepared(originalTitleParameter, title.originalTitle);
-                v.FillParameterPrepared(isAdultParameter, title.isAdult);
-                v.FillParameterPrepared(startYearParameter, title.startYear);
-                v.FillParameterPrepared(endYearParameter, title.endYear);
-                v.FillParameterPrepared(runtimeMinutesParameter, title.runtimeMinutes);
+                f.FillParameterPrepared(tconstParameter, title.tconst);
+                f.FillParameterPrepared(titleTypeParameter, title.titleType);
+                f.FillParameterPrepared(primaryTitleParameter, title.primaryTitle);
+                f.FillParameterPrepared(originalTitleParameter, title.originalTitle);
+                f.FillParameterPrepared(isAdultParameter, title.isAdult);
+                f.FillParameterPrepared(startYearParameter, title.startYear);
+                f.FillParameterPrepared(endYearParameter, title.endYear);
+                f.FillParameterPrepared(runtimeMinutesParameter, title.runtimeMinutes);
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -78,7 +78,7 @@ namespace IMDBConsole.titleActions
 
             foreach (Genre genre in genres)
             {
-                v.FillParameterPrepared(genreNameParameter, genre.genreName);
+                f.FillParameterPrepared(genreNameParameter, genre.genreName);
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -108,12 +108,12 @@ namespace IMDBConsole.titleActions
 
             foreach (TitleGenre titleGenre in titleGenres)
             {
-                int genreID = e.GetGenreID(sqlConn, titleGenre.genreName);
+                int genreID = f.GetID("genreID", "Genres", "genreName", titleGenre.genreName, sqlConn);
 
                 if (genreID != -1)
                 {
-                    v.FillParameterPrepared(tconstParameter, titleGenre.tconst);
-                    v.FillParameterPrepared(genreIDParameter, genreID);
+                    f.FillParameterPrepared(tconstParameter, titleGenre.tconst);
+                    f.FillParameterPrepared(genreIDParameter, genreID);
 
                     try
                     {
