@@ -4,7 +4,8 @@ using System.Data.SqlClient;
 
 namespace IMDBConsole.nameActions
 {
-    public class NameBulked : IInserter<Name>, IInserter<Profession>, IInserter<PrimaryProfession>, IInserter<KnownForTitle>
+    public class NameBulked : IInserter<Name>, IInserter<Profession>,
+        IInserter<PrimaryProfession>, IInserter<KnownForTitle>
     {
         readonly GlobalFunctions f = new();
 
