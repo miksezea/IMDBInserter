@@ -1,5 +1,4 @@
-﻿using IMDBConsole.crewActions;
-using IMDBLib.titleCrew;
+﻿using IMDBLib.titleCrew;
 using System.Data.SqlClient;
 
 namespace IMDBConsole.admin.crewActions

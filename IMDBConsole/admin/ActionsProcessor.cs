@@ -90,10 +90,10 @@ namespace IMDBConsole.admin
                     CrewExtra crewExtra = new();
                     crewExtra.DBCrewCount(sqlConn);
                     break;
-                case "Title.Akas": // TODO
+                case "Title.Akas": // Extra
                     DatasetSelector(_tsv);
                     break;
-                case "Title.Principals": // TODO
+                case "Title.Principals": // Extra
                     DatasetSelector(_tsv);
                     break;
             }
@@ -126,10 +126,10 @@ namespace IMDBConsole.admin
                     CrewExtra crewExtra = new();
                     crewExtra.DBCrewDeleteRows(sqlConn);
                     break;
-                case "Title.Akas": // TODO
+                case "Title.Akas": // Extra
 
                     break;
-                case "Title.Principals": // TODO
+                case "Title.Principals": // Extra
 
                     break;
             }
@@ -175,10 +175,10 @@ namespace IMDBConsole.admin
                     CrewInserter crewInserter = new();
                     crewInserter.InsertCrewData(connString, inserterType, path, lineAmount);
                     break;
-                case "Title.Akas": // TODO
+                case "Title.Akas": // Extra
 
                     break;
-                case "Title.Principals": // TODO
+                case "Title.Principals": // Extra
 
                     break;
             }

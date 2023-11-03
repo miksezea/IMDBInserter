@@ -1,5 +1,4 @@
-﻿using IMDBConsole.titleActions;
-using IMDBLib.titleBasics;
+﻿using IMDBLib.titleBasics;
 using System.Data.SqlClient;
 
 namespace IMDBConsole.admin.titleActions

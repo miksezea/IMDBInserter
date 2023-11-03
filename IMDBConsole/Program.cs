@@ -1,6 +1,4 @@
-﻿using IMDBConsole.admin;
-
-namespace IMDBConsole
+﻿namespace IMDBConsole
 {
     public static class Program
     {
@@ -22,10 +20,10 @@ namespace IMDBConsole
                     AdminActions admin = new();
                     admin.AdminMenu();
                     break;
-                case "2": //TODO: Implement user actions
+                case "2":
                     Console.Clear();
-                    //UserActions user = new();
-                    //user.UserMenu();
+                    UserActions user = new();
+                    user.UserMenu();
                     Main(null);
                     break;
                 case "3":
