@@ -5,21 +5,21 @@ namespace IMDBConsole.admin.titleActions
 {
     public class TitleNormal : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
             foreach (Title title in titles)
             {
                 SqlCommand sqlCmd = new("INSERT INTO [dbo].[Titles]" +
-                    "([tconst],[titleType],[primaryTitle],[originalTitle]," +
+                    "([tconst],[titleType],[primaryTitle],[originalTitle], " +
                     "[isAdult],[startYear],[endYear],[runtimeMinutes])VALUES " +
-                    $"('{title.tconst}'," +
-                    $"'{title.titleType}'," +
-                    $"'{f.ConvertToSqlString(title.primaryTitle)}'," +
-                    $"'{f.ConvertToSqlString(title.originalTitle)}'," +
-                    $"'{title.isAdult}'," +
-                    $"{f.CheckIntForNull(title.startYear)}," +
-                    $"{f.CheckIntForNull(title.endYear)}," +
+                    $"('{title.tconst}', " +
+                    $"'{title.titleType}', " +
+                    $"'{f.ConvertToSqlString(title.primaryTitle)}', " +
+                    $"'{f.ConvertToSqlString(title.originalTitle)}', " +
+                    $"'{title.isAdult}', " +
+                    $"{f.CheckIntForNull(title.startYear)}, " +
+                    $"{f.CheckIntForNull(title.endYear)}, " +
                     $"{f.CheckIntForNull(title.runtimeMinutes)})", sqlConn);
                 try
                 {

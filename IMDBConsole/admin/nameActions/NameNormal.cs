@@ -5,7 +5,7 @@ namespace IMDBConsole.admin.nameActions
 {
     public class NameNormal : IInserter<Name>, IInserter<Profession>, IInserter<PrimaryProfession>, IInserter<KnownForTitle>
     {
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
 
         public void InsertData(SqlConnection sqlConn, List<Name> names)
         {

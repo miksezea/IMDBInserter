@@ -33,10 +33,18 @@ namespace IMDBConsole
                 case "3":
                     Console.Clear();
                     ap.AddName();
+
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    UserMenu();
                     break;
                 case "4":
                     Console.Clear();
                     ap.AddTitle();
+
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    UserMenu();
                     break;
                 case "5":
                     Console.Clear();

@@ -6,7 +6,7 @@ namespace IMDBConsole.admin.crewActions
 {
     public class CrewBulked : IInserter<Director>, IInserter<Writer>
     {
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
 
         public void InsertData(SqlConnection sqlConn, List<Director> directors)
         {

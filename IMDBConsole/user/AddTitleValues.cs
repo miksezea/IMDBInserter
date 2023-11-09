@@ -1,4 +1,6 @@
-﻿namespace IMDBConsole.user
+﻿using IMDBLib.titleBasics;
+
+namespace IMDBConsole.user
 {
     public class AddTitleValues
     {
@@ -170,6 +172,132 @@
                 Console.WriteLine();
                 return RuntimeMinutes();
             }
+        }
+
+        public List<Genre>? Genres()
+        {
+            Console.WriteLine("Which genres does the title have? (max 3)");
+            Console.WriteLine("1: Documentary   |   2: Short      |   3: Animation");
+            Console.WriteLine("4: Comedy        |   5: Romance    |   6: Sport");
+            Console.WriteLine("7: News          |   8: Drama      |   9: Fantasy");
+            Console.WriteLine("10: Horror       |   11: Biography |   12: Music");
+            Console.WriteLine("13: War          |   14: Crime     |   15: Western");
+            Console.WriteLine("16: Family       |   17: Adventure |   18: Action");
+            Console.WriteLine("19: History      |   20: Mystery   |   21: Sci-Fi");
+            Console.WriteLine("22: Musical      |");
+            Console.WriteLine("23: No more genres");
+
+            List<Genre>? genres = new List<Genre>();
+            string? input = Console.ReadLine();
+            int genresCount = 0;
+
+            while (genresCount != 3)
+            {
+                switch (input)
+                {
+                    case "1":
+                        genres.Add(new Genre("Documentary", 1));
+                        genresCount++;
+                        break;
+                    case "2":
+                        genres.Add(new Genre("Short", 2));
+                        genresCount++;
+                        break;
+                    case "3":
+                        genres.Add(new Genre("Animation", 3));
+                        genresCount++;
+                        break;
+                    case "4":
+                        genres.Add(new Genre("Comedy", 4));
+                        genresCount++;
+                        break;
+                    case "5":
+                        genres.Add(new Genre("Romance", 5));
+                        genresCount++;
+                        break;
+                    case "6":
+                        genres.Add(new Genre("Sport", 6));
+                        genresCount++;
+                        break;
+                    case "7":
+                        genres.Add(new Genre("News", 7));
+                        genresCount++;
+                        break;
+                    case "8":
+                        genres.Add(new Genre("Drama", 8));
+                        genresCount++;
+                        break;
+                    case "9":
+                        genres.Add(new Genre("Fantasy", 9));
+                        genresCount++;
+                        break;
+                    case "10":
+                        genres.Add(new Genre("Horror", 10));
+                        genresCount++;
+                        break;
+                    case "11":
+                        genres.Add(new Genre("Biography", 11));
+                        genresCount++;
+                        break;
+                    case "12":
+                        genres.Add(new Genre("Music", 12));
+                        genresCount++;
+                        break;
+                    case "13":
+                        genres.Add(new Genre("War", 13));
+                        genresCount++;
+                        break;
+                    case "14":
+                        genres.Add(new Genre("Crime", 14));
+                        genresCount++;
+                        break;
+                    case "15":
+                        genres.Add(new Genre("Western", 15));
+                        genresCount++;
+                        break;
+                    case "16":
+                        genres.Add(new Genre("Family", 16));
+                        genresCount++;
+                        break;
+                    case "17":
+                        genres.Add(new Genre("Adventure", 17));
+                        genresCount++;
+                        break;
+                    case "18":
+                        genres.Add(new Genre("Action", 18));
+                        genresCount++;
+                        break;
+                    case "19":
+                        genres.Add(new Genre("History", 19));
+                        genresCount++;
+                        break;
+                    case "20":
+                        genres.Add(new Genre("Mystery", 20));
+                        genresCount++;
+                        break;
+                    case "21":
+                        genres.Add(new Genre("Sci-Fi", 21));
+                        genresCount++;
+                        break;
+                    case "22":
+                        genres.Add(new Genre("Musical", 22));
+                        genresCount++;
+                        break;
+                    case "23":
+                        genresCount = 3;
+                        break;
+                    default:
+                        Console.WriteLine($"{input} is not a valid option.");
+                        Console.WriteLine();
+                        return Genres();
+                }
+                if (genresCount != 3)
+                {
+                    Console.WriteLine("Next genre:");
+                    input = Console.ReadLine();
+                }
+            }
+            return genres;
         }
     }
 }

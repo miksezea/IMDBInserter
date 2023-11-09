@@ -5,7 +5,7 @@ namespace IMDBConsole.admin.crewActions
     public class CrewExtra
     {
         SqlConnection _sqlConn = new();
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
         public void DBCrewCount(SqlConnection sqlConn)
         {
             _sqlConn = sqlConn;

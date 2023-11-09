@@ -5,7 +5,7 @@ namespace IMDBConsole.admin.nameActions
     public class NameExtra
     {
         SqlConnection _sqlConn = new();
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
         public void DBNameCount(SqlConnection sqlConn)
         {
             _sqlConn = sqlConn;

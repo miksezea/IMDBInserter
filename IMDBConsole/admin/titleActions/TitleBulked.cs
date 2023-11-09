@@ -6,7 +6,7 @@ namespace IMDBConsole.admin.titleActions
 {
     public class TitleBulked : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {
             DataTable titlesTable = new("Titles");

@@ -9,7 +9,11 @@ namespace IMDBConsole.admin
     {
         private static readonly string connString = "server=localhost; database=MyIMDB;" +
             "user id=sa; password=bibliotek; TrustServerCertificate=True";
+
+#pragma warning disable S1075 // URIs should not be hardcoded
         private static readonly string tsvPath = @"C:\Users\mikke\OneDrive\Desktop\4Semester\IMDBTSV\";
+#pragma warning restore S1075 // URIs should not be hardcoded
+
         private string _tsv = "";
         public void DatasetSelector(string tsv)
         {

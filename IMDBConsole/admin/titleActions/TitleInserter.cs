@@ -12,7 +12,7 @@ namespace IMDBConsole.admin.titleActions
         string _path = "";
         SqlConnection sqlConn = new();
         readonly HashSet<string> existingGenres = new();
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
 
         public void InsertTitleData(string connString, int inserterType, string path, int lineAmount)
         {

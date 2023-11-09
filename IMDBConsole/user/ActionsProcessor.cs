@@ -1,5 +1,5 @@
-﻿using IMDBLib.nameBasics;
-using IMDBLib.titleBasics;
+﻿using IMDBLib.titleBasics;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace IMDBConsole.user
@@ -7,15 +7,14 @@ namespace IMDBConsole.user
     public class ActionsProcessor
     {
         private static readonly string connString = "server=localhost; database=MyIMDB;" +
-            "user id=sa; password=bibliotek; TrustServerCertificate=True";
-        private readonly UserActions ua = new();
-        private readonly GlobalFunctions f = new();
+            "user id=IMDBUser; password=password; TrustServerCertificate=True";
+        private readonly UserFunctions f = new();
         private readonly AddTitleValues atv = new();
         private readonly AddNameValues anv = new();
+        SqlConnection sqlConn = new();
 
-        public void TitleSearch() // TODO: Add pagination
+        public void TitleSearch()
         {
-
             Console.WriteLine("Enter a title to search for:");
             string? input = Console.ReadLine();
             Console.WriteLine("");
@@ -28,25 +27,22 @@ namespace IMDBConsole.user
             }
             else
             {
-                SqlConnection sqlConn = new(connString);
+                sqlConn = new(connString);
                 sqlConn.Open();
 
                 SqlCommand countCmd = new($"SELECT COUNT(*) FROM [Titles] WHERE primaryTitle LIKE @input", sqlConn);
                 countCmd.Parameters.AddWithValue("@input", "%" + input + "%");
                 int totalCount = (int)countCmd.ExecuteScalar();
 
-                int displayNumberMin = 1;
-                int displayNumberMax = 10;
-
-                SqlCommand cmd = new($"SELECT TOP ({displayNumberMax}) [titleType], [primaryTitle], [originalTitle], [isAdult], [startYear], [endYear], [runtimeMinutes]" +
+                SqlCommand SelectCmd = new($"SELECT TOP (5) *" +
                     " FROM [Titles] WHERE primaryTitle LIKE @input", sqlConn);
+                SelectCmd.Parameters.AddWithValue("@input", "%" + input + "%");
 
-                cmd.Parameters.AddWithValue("@input", "%" + input + "%");
-
-                SqlDataReader reader = cmd.ExecuteReader();
+                SqlDataReader reader = SelectCmd.ExecuteReader();
 
                 while (reader.Read())
                 {
+                    Console.WriteLine($"Id: {reader["tconst"]}");
                     Console.WriteLine($"Title: {reader["primaryTitle"]}");
                     if (reader["originalTitle"] != reader["primaryTitle"])
                     {
@@ -74,9 +70,10 @@ namespace IMDBConsole.user
                     Console.WriteLine();
                 }
 
-                Console.WriteLine($"Showing {displayNumberMin}-{displayNumberMax} out of {totalCount} titles");
-                Console.WriteLine("What do you want to do next?");
-                Console.ReadLine();
+                sqlConn.Close();
+
+                Console.WriteLine($"Showing 5 out of {totalCount} titles");
+                Console.WriteLine();
             }
         }
 
@@ -84,7 +81,7 @@ namespace IMDBConsole.user
         {
             Console.WriteLine("Enter a name to search for:");
             string? input = Console.ReadLine();
-            Console.WriteLine("");
+            Console.WriteLine();
 
             if (input == null)
             {
@@ -94,17 +91,14 @@ namespace IMDBConsole.user
             }
             else
             {
-                SqlConnection sqlConn = new(connString);
+                sqlConn = new(connString);
                 sqlConn.Open();
 
                 SqlCommand countCmd = new($"SELECT COUNT(*) FROM [Names] WHERE primaryName LIKE @input", sqlConn);
                 countCmd.Parameters.AddWithValue("@input", "%" + input + "%");
                 int totalCount = (int)countCmd.ExecuteScalar();
 
-                int displayNumberMin = 1;
-                int displayNumberMax = 10;
-
-                SqlCommand cmd = new($"SELECT TOP ({displayNumberMax}) [primaryName], [birthYear], [deathYear]" +
+                SqlCommand cmd = new($"SELECT TOP (5) *" +
                                        " FROM [Names] WHERE primaryName LIKE @input", sqlConn);
 
                 cmd.Parameters.AddWithValue("@input", "%" + input + "%");
@@ -113,6 +107,7 @@ namespace IMDBConsole.user
 
                 while (reader.Read())
                 {
+                    Console.WriteLine($"ID: {reader["nconst"]}");
                     Console.WriteLine($"Name: {reader["primaryName"]}");
                     Console.WriteLine($"Birth Year: {reader["birthYear"]}");
                     if (reader["deathYear"] != DBNull.Value)
@@ -122,12 +117,13 @@ namespace IMDBConsole.user
                     Console.WriteLine();
                 }
 
-                Console.WriteLine($"Showing {displayNumberMin}-{displayNumberMax} out of {totalCount} names");
-                Console.WriteLine("Press enter to continue");
-                Console.ReadLine();
+                sqlConn.Close();
+
+                Console.WriteLine($"Showing 5 out of {totalCount} names");
+                Console.WriteLine();
             }
         }
-        
+
         public void AddTitle()
         {
             string? primaryTitleFirst = atv.PrimaryTitle();
@@ -163,7 +159,8 @@ namespace IMDBConsole.user
                             Console.WriteLine("Title cannot be empty");
                             Console.WriteLine();
                             atv.OriginalTitle();
-                        } else
+                        }
+                        else
                         {
                             originalTitle = originalTitleFirst;
                         }
@@ -183,13 +180,14 @@ namespace IMDBConsole.user
             Console.WriteLine();
 
             string? titleTypeFirst = atv.TitleType();
-            while (titleTypeFirst != null || titleTypeFirst != "")
+            string titleType = "";
+            while (titleTypeFirst != null && titleTypeFirst != "")
             {
                 Console.WriteLine("Title cannot be empty");
                 Console.WriteLine();
                 atv.TitleType();
+                titleType = titleTypeFirst;
             }
-            string titleType = titleTypeFirst;
             Console.Clear();
             Console.WriteLine($"Title: {primaryTitle}, Original title: {originalTitle}, Type: {titleType}");
             Console.WriteLine();
@@ -218,113 +216,131 @@ namespace IMDBConsole.user
             Console.WriteLine($"Title: {primaryTitle}, Original title: {originalTitle}, Type: {titleType}, Adult: {isAdult}, Release year: {startYear}, End year: {endYear}, Runtime: {runtimeMinutes}");
             Console.WriteLine();
 
+            List<Genre>? genreList = atv.Genres();
+
+            Console.Clear();
+            Console.WriteLine($"Title: {primaryTitle}, Original title: {originalTitle}, Type: {titleType}, Adult: {isAdult}, Release year: {startYear}, End year: {endYear}, Runtime: {runtimeMinutes}");
+
+            string genreText = "Genres: ";
+
+            if (genreList != null)
+            {
+                string genresNames = string.Join(", ", genreList.Select(g => g.genreName));
+                genreText += genresNames;
+            }
+            else
+            {
+                genreText += "No genres selected";
+            }
+            Console.WriteLine(genreText);
+
             Console.WriteLine("Is the title info correct?");
             Console.WriteLine("1: Yes");
             Console.WriteLine("2: No");
             input = Console.ReadLine();
 
-            while (input != "1" || input != "2")
+            while (input != "1" && input != "2")
             {
-                switch (input)
-                {
-                    case "1":
-                        SqlConnection sqlConn = new(connString);
-                        sqlConn.Open();
+                Console.Clear();
+                Console.WriteLine($"{input} is not a valid option.");
+                Console.WriteLine();
+                Console.WriteLine($"Title: {primaryTitle}, Original title: {originalTitle}, Type: {titleType}, Adult: {isAdult}, Release year: {startYear}, End year: {endYear}, Runtime: {runtimeMinutes}");
+                Console.WriteLine(genreText);
+                Console.WriteLine();
+                Console.WriteLine("Is the title info correct?");
+                Console.WriteLine("1: Yes");
+                Console.WriteLine("2: No");
+                input = Console.ReadLine();
+            }
 
-                        SqlCommand findTconstCmd = new("SELECT TOP 1 [tconst] FROM [dbo].[Titles] ORDER BY [tconst] DESC", sqlConn);
-                        SqlDataReader reader = findTconstCmd.ExecuteReader();
+            switch (input)
+            {
+                case "1":
+                    sqlConn = new(connString);
+                    sqlConn.Open();
 
-                        string? tconstFound = null;
+                    SqlCommand findTconstCmd = new("SELECT TOP 1 [tconst] FROM [dbo].[Titles] ORDER BY [tconst] DESC", sqlConn);
+                    SqlDataReader reader = findTconstCmd.ExecuteReader();
 
-                        while (reader.Read())
+                    string? tconstFound = null;
+
+                    while (reader.Read())
+                    {
+                        tconstFound = reader.GetString(0);
+                    }
+                    reader.Close();
+
+                    if (tconstFound == null)
+                    {
+                        tconstFound = "tt0000000";
+                    }
+
+                    string tconstNumber = tconstFound[2..];
+
+                    int tconstInt = int.Parse(tconstNumber);
+                    tconstInt++;
+
+                    string tconst = "tt" + tconstInt.ToString("D7");
+
+                    SqlCommand addTitleCmd = new("InsertTitle", sqlConn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    addTitleCmd.Parameters.AddWithValue("@tconst", tconst);
+                    addTitleCmd.Parameters.AddWithValue("@primaryTitle", f.ConvertToSqlString(primaryTitle));
+                    addTitleCmd.Parameters.AddWithValue("@originalTitle", f.ConvertToSqlString(originalTitle));
+                    addTitleCmd.Parameters.AddWithValue("@titleType", f.ConvertToSqlString(titleType));
+                    addTitleCmd.Parameters.AddWithValue("@isAdult", isAdult);
+                    addTitleCmd.Parameters.AddWithValue("@startYear", f.CheckIntForNull(startYear));
+                    addTitleCmd.Parameters.AddWithValue("@endYear", f.CheckIntForNull(endYear));
+                    addTitleCmd.Parameters.AddWithValue("@runtimeMinutes", f.CheckIntForNull(runtimeMinutes));
+
+                    try
+                    {
+                        addTitleCmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(addTitleCmd.CommandText);
+                        Console.ReadKey();
+                    }
+
+                    if (genreList != null)
+                    {
+                        foreach (Genre genre in genreList)
                         {
-                            tconstFound = reader.GetString(0);
+                            SqlCommand addTitleGenreCmd = new("InsertTitleGenres", sqlConn)
+                            {
+                                CommandType = CommandType.StoredProcedure
+                            };
+
+                            addTitleGenreCmd.Parameters.AddWithValue("@tconst", tconst);
+                            addTitleGenreCmd.Parameters.AddWithValue("@genre", genre.genreID);
+
+                            try
+                            {
+                                addTitleGenreCmd.ExecuteNonQuery();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                                Console.WriteLine(addTitleGenreCmd.CommandText);
+                                Console.ReadKey();
+                            }
                         }
-                        reader.Close();
+                    }
 
-                        if (tconstFound == null)
-                        {
-                            tconstFound = "tt0000000";
-                        }
+                    sqlConn.Close();
 
-                        string tconstNumber = tconstFound[2..];
-
-                        int tconstInt = int.Parse(tconstNumber);
-                        tconstInt++;
-
-                        string tconst = "tt" + tconstInt.ToString("D7");
-
-                        Title title = new(tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes);
-
-                        SqlCommand addTitleCmd = new("" +
-                            "INSERT INTO [dbo].[Titles]" +
-                            "([tconst], [titleType], [primaryTitle], [originalTitle]," +
-                            "[isAdult], [startYear], [endYear], [runtimeMinutes])VALUES " +
-                            $"(@tconst, @titleType, @primaryTitle, @originalTitle," +
-                            $"@isAdult, @startYear, @endYear, @runtimeMinutes)", sqlConn);
-
-                        SqlParameter tconstParameter = new("@tconst", System.Data.SqlDbType.VarChar, 10);
-                        addTitleCmd.Parameters.Add(tconstParameter);
-
-                        SqlParameter titleTypeParameter = new("@titleType", System.Data.SqlDbType.VarChar, 50);
-                        addTitleCmd.Parameters.Add(titleTypeParameter);
-
-                        SqlParameter primaryTitleParameter = new("@primaryTitle", System.Data.SqlDbType.VarChar, 8000);
-                        addTitleCmd.Parameters.Add(primaryTitleParameter);
-
-                        SqlParameter originalTitleParameter = new("@originalTitle", System.Data.SqlDbType.VarChar, 8000);
-                        addTitleCmd.Parameters.Add(originalTitleParameter);
-
-                        SqlParameter isAdultParameter = new("@isAdult", System.Data.SqlDbType.Bit);
-                        addTitleCmd.Parameters.Add(isAdultParameter);
-
-                        SqlParameter startYearParameter = new("@startYear", System.Data.SqlDbType.Int);
-                        addTitleCmd.Parameters.Add(startYearParameter);
-
-                        SqlParameter endYearParameter = new("@endYear", System.Data.SqlDbType.Int);
-                        addTitleCmd.Parameters.Add(endYearParameter);
-
-                        SqlParameter runtimeMinutesParameter = new("@runtimeMinutes", System.Data.SqlDbType.Int);
-                        addTitleCmd.Parameters.Add(runtimeMinutesParameter);
-
-                        addTitleCmd.Prepare();
-
-                        f.FillParameterPrepared(tconstParameter, title.tconst);
-                        f.FillParameterPrepared(titleTypeParameter, title.titleType);
-                        f.FillParameterPrepared(primaryTitleParameter, title.primaryTitle);
-                        f.FillParameterPrepared(originalTitleParameter, title.originalTitle);
-                        f.FillParameterPrepared(isAdultParameter, title.isAdult);
-                        f.FillParameterPrepared(startYearParameter, title.startYear);
-                        f.FillParameterPrepared(endYearParameter, title.endYear);
-                        f.FillParameterPrepared(runtimeMinutesParameter, title.runtimeMinutes);
-
-                        try
-                        {
-                            addTitleCmd.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                            Console.WriteLine(addTitleCmd.CommandText);
-                            Console.ReadKey();
-                        }
-
-                        Console.WriteLine("Title added");
-                        Console.WriteLine();
-                        break;
-                    case "2":
-                        Console.WriteLine("Title not added");
-                        Console.WriteLine();
-                        ua.UserMenu();
-                        break;
-                    default:
-                        Console.Clear();
-                        Console.WriteLine($"{input} is not a valid option.");
-                        Console.WriteLine();
-                        Console.WriteLine($"Title: {primaryTitle}, Original title: {originalTitle}, Type: {titleType}, Adult: {isAdult}, Release year: {startYear}, End year: {endYear}, Runtime: {runtimeMinutes}");
-                        Console.WriteLine();
-                        break;
-                }
+                    Console.WriteLine("Title added");
+                    Console.WriteLine();
+                    break;
+                case "2":
+                    Console.WriteLine("Title not added");
+                    Console.WriteLine();
+                    break;
             }
         }
 
@@ -371,7 +387,7 @@ namespace IMDBConsole.user
             Console.WriteLine($"Name: {primaryName}, Birth year: {birthYear}");
             Console.WriteLine();
 
-            int? deathYear = null;
+            int? deathYear;
             while (true)
             {
                 deathYear = anv.DeathYear();
@@ -400,106 +416,301 @@ namespace IMDBConsole.user
             Console.WriteLine($"Name: {primaryName}, Birth year: {birthYear}, Death year: {deathYear}");
             Console.WriteLine();
 
+
+
             Console.WriteLine("Is the name info correct?");
             Console.WriteLine("1: Yes");
             Console.WriteLine("2: No");
             string? input = Console.ReadLine();
-            while (input != "1" || input != "2")
+
+            while (input != "1" && input != "2")
             {
-                switch (input)
-                {
-                    case "1":
-                        SqlConnection sqlConn = new(connString);
-                        sqlConn.Open();
+                Console.Clear();
+                Console.WriteLine($"{input} is not a valid option.");
+                Console.WriteLine();
+                Console.WriteLine($"Name: {primaryName}, Birth year: {birthYear}, Death year: {deathYear}");
+                Console.WriteLine();
+                Console.WriteLine("Is the name info correct?");
+                Console.WriteLine("1: Yes");
+                Console.WriteLine("2: No");
+                input = Console.ReadLine();
+            }
 
-                        SqlCommand findNconstCmd = new("SELECT TOP 1 [nconst] FROM [dbo].[Names] ORDER BY [nconst] DESC", sqlConn);
-                        SqlDataReader reader = findNconstCmd.ExecuteReader();
+            switch (input)
+            {
+                case "1":
+                    sqlConn = new(connString);
+                    sqlConn.Open();
 
-                        string? nconstFound = null;
+                    SqlCommand findNconstCmd = new("SELECT TOP 1 [nconst] FROM [dbo].[Names] ORDER BY [nconst] DESC", sqlConn);
+                    SqlDataReader reader = findNconstCmd.ExecuteReader();
 
-                        while (reader.Read())
-                        {
-                            nconstFound = reader.GetString(0);
-                        }
-                        reader.Close();
+                    string? nconstFound = null;
 
-                        if (nconstFound == null)
-                        {
-                            nconstFound = "nm0000000";
-                        }
+                    while (reader.Read())
+                    {
+                        nconstFound = reader.GetString(0);
+                    }
+                    reader.Close();
 
-                        string nconstNumber = nconstFound[2..];
+                    if (nconstFound == null)
+                    {
+                        nconstFound = "nm0000000";
+                    }
 
-                        int nconstInt = int.Parse(nconstNumber);
-                        nconstInt++;
+                    string nconstNumber = nconstFound[2..];
 
-                        string nconst = "nm" + nconstInt.ToString("D7");
+                    int nconstInt = int.Parse(nconstNumber);
+                    nconstInt++;
 
-                        Name name = new(nconst, primaryName, birthYear, deathYear);
+                    string nconst = "nm" + nconstInt.ToString("D7");
 
-                        SqlCommand addNameCmd = new("" +
-                            "INSERT INTO [dbo].[Names]" +
-                            "([nconst], [primaryName], [birthYear], [deathYear])VALUES " +
-                            $"(@nconst, @primaryName, @birthYear, @deathYear)", sqlConn);
 
-                        SqlParameter nconstParameter = new("@nconst", System.Data.SqlDbType.VarChar, 10);
-                        addNameCmd.Parameters.Add(nconstParameter);
+                    SqlCommand addNameCmd = new("InsertName", sqlConn)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    };
 
-                        SqlParameter primaryNameParameter = new("@primaryName", System.Data.SqlDbType.VarChar, 8000);
-                        addNameCmd.Parameters.Add(primaryNameParameter);
+                    addNameCmd.Parameters.AddWithValue("@nconst", nconst);
+                    addNameCmd.Parameters.AddWithValue("@primaryName", f.ConvertToSqlString(primaryName));
+                    addNameCmd.Parameters.AddWithValue("@birthYear", f.CheckIntForNull(birthYear));
+                    addNameCmd.Parameters.AddWithValue("@deathYear", f.CheckIntForNull(deathYear));
 
-                        SqlParameter birthYearParameter = new("@birthYear", System.Data.SqlDbType.Int);
-                        addNameCmd.Parameters.Add(birthYearParameter);
+                    try
+                    {
+                        addNameCmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        Console.WriteLine(addNameCmd.CommandText);
+                        Console.ReadKey();
+                    }
 
-                        SqlParameter deathYearParameter = new("@deathYear", System.Data.SqlDbType.Int);
-                        addNameCmd.Parameters.Add(deathYearParameter);
+                    sqlConn.Close();
 
-                        addNameCmd.Prepare();
-
-                        f.FillParameterPrepared(nconstParameter, name.nconst);
-                        f.FillParameterPrepared(primaryNameParameter, name.primaryName);
-                        f.FillParameterPrepared(birthYearParameter, name.birthYear);
-                        f.FillParameterPrepared(deathYearParameter, name.deathYear);
-
-                        try
-                        {
-                            addNameCmd.ExecuteNonQuery();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                            Console.WriteLine(addNameCmd.CommandText);
-                            Console.ReadKey();
-                        }
-
-                        Console.WriteLine("Name added");
-                        Console.WriteLine();
-                        break;
-                    case "2":
-                        Console.WriteLine("Name not added");
-                        Console.WriteLine();
-                        ua.UserMenu();
-                        break;
-                    default:
-                        Console.WriteLine($"{input} is not a valid option.");
-                        Console.WriteLine();
-                        Console.WriteLine("Is the name info correct?");
-                        Console.WriteLine("1: Yes");
-                        Console.WriteLine("2: No");
-                        input = Console.ReadLine();
-                        break;
-                }
+                    Console.WriteLine("Name added");
+                    Console.WriteLine();
+                    break;
+                case "2":
+                    Console.WriteLine("Name not added");
+                    Console.WriteLine();
+                    break;
             }
         }
 
         public void UpdateTitle()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Which title should be updated? (tconst)");
+            string? input = Console.ReadLine();
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                Console.Clear();
+                Console.WriteLine("tconst can't be null");
+                Console.WriteLine("Which title should be updated? (tconst)");
+                input = Console.ReadLine();
+            }
+
+            sqlConn = new(connString);
+            sqlConn.Open();
+
+            SqlCommand findTitleCmd = new($"SELECT * FROM [Titles] WHERE tconst = {input}", sqlConn);
+
+            SqlDataReader reader = findTitleCmd.ExecuteReader();
+
+            string tconst = "";
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    tconst = reader.GetString(0);
+                    Console.WriteLine($"Primary title: {reader["primaryTitle"]}");
+                    Console.WriteLine($"Original title: {reader["originalTitle"]}");
+                    Console.WriteLine($"Type: {reader["titleType"]}");
+                    Console.WriteLine($"Adult: {reader["isAdult"]}");
+                    Console.WriteLine($"Release year: {reader["startYear"]}");
+                    Console.WriteLine($"End year: {reader["endYear"]}");
+                    Console.WriteLine($"Runtime: {reader["runtimeMinutes"]}");
+                    Console.WriteLine();
+                }
+                reader.Close();
+
+                Console.WriteLine("Enter the updated information (leave empty if no changes): ");
+
+                SqlCommand updateTitleCmd = new("UpdateTitle", sqlConn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                updateTitleCmd.Parameters.AddWithValue("@tconst", tconst);
+
+                Console.WriteLine("Enter new primary title: ");
+                string? primaryTitle = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(primaryTitle))
+                {
+                    updateTitleCmd.Parameters.AddWithValue("@primaryTitle", primaryTitle);
+                }
+
+                Console.WriteLine("Enter new original title: ");
+                string? originalTitle = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(originalTitle))
+                {
+                    updateTitleCmd.Parameters.AddWithValue("@originalTitle", originalTitle);
+                }
+
+                Console.WriteLine("Enter new title type: ");
+                string? titleType = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(titleType))
+                {
+                    updateTitleCmd.Parameters.AddWithValue("@titleType", titleType);
+                }
+
+                Console.WriteLine("Is it an adult movie? (true/false): ");
+                string? isAdult = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(isAdult))
+                {
+                    bool isAdultBool = bool.Parse(isAdult);
+                    updateTitleCmd.Parameters.AddWithValue("@isAdult", isAdultBool);
+                }
+
+                Console.WriteLine("Enter new release year (empty if no release year): ");
+                string? startYear = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(startYear))
+                {
+                    int startYearInt = int.Parse(startYear);
+                    updateTitleCmd.Parameters.AddWithValue("@startYear", startYearInt);
+                }
+
+                Console.WriteLine("Enter new end year (empty if no end year): ");
+                string? endYear = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(endYear))
+                {
+                    int endYearInt = int.Parse(endYear);
+                    updateTitleCmd.Parameters.AddWithValue("@endYear", endYearInt);
+                }
+
+                Console.WriteLine("Enter new runtime (empty if no runtime): ");
+                string? runtimeMinutes = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(runtimeMinutes))
+                {
+                    int runtimeMinutesInt = int.Parse(runtimeMinutes);
+                    updateTitleCmd.Parameters.AddWithValue("@runtimeMinutes", runtimeMinutesInt);
+                }
+
+                try
+                {
+                    updateTitleCmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(updateTitleCmd.CommandText);
+                    Console.ReadKey();
+                }
+                sqlConn.Close();
+            }
+            else
+            {
+                Console.WriteLine($"Title with ID: {tconst} does not exist");
+                Console.WriteLine("Press any button to go back...");
+                sqlConn.Close();
+                Console.ReadKey();
+            }
         }
 
         public void DeleteTitle()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Which title should be deleted? (tconst)");
+            string? input = Console.ReadLine();
+
+            while (string.IsNullOrWhiteSpace(input))
+            {
+                Console.Clear();
+                Console.WriteLine("tconst can't be null");
+                Console.WriteLine("Which title should be deleted? (tconst)");
+                input = Console.ReadLine();
+            }
+
+            sqlConn = new(connString);
+            sqlConn.Open();
+
+            SqlCommand findTitleCmd = new($"SELECT * FROM [Titles] WHERE tconst = {input}", sqlConn);
+
+            SqlDataReader reader = findTitleCmd.ExecuteReader();
+
+            string tconst = "";
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    tconst = reader.GetString(0);
+                    Console.WriteLine($"Primary title: {reader["primaryTitle"]}");
+                    Console.WriteLine($"Original title: {reader["originalTitle"]}");
+                    Console.WriteLine($"Type: {reader["titleType"]}");
+                    Console.WriteLine($"Adult: {reader["isAdult"]}");
+                    Console.WriteLine($"Release year: {reader["startYear"]}");
+                    Console.WriteLine($"End year: {reader["endYear"]}");
+                    Console.WriteLine($"Runtime: {reader["runtimeMinutes"]}");
+                    Console.WriteLine();
+                }
+                reader.Close();
+
+                Console.WriteLine("Are you sure you want to delete this title?");
+                Console.WriteLine("1: Yes");
+                Console.WriteLine("2: No");
+                string? deleteInput = Console.ReadLine();
+
+                while (deleteInput != "1" && deleteInput != "2")
+                {
+                    Console.Clear();
+                    Console.WriteLine($"{deleteInput} is not a valid option.");
+                    Console.WriteLine();
+                    Console.WriteLine("Are you sure you want to delete this title?");
+                    Console.WriteLine("1: Yes");
+                    Console.WriteLine("2: No");
+                    deleteInput = Console.ReadLine();
+                }
+
+                switch (deleteInput)
+                {
+                    case "1":
+                        SqlCommand deleteTitleCmd = new("DeleteTitle", sqlConn)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+
+                        deleteTitleCmd.Parameters.AddWithValue("@tconst", tconst);
+
+                        try
+                        {
+                            deleteTitleCmd.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            Console.WriteLine(deleteTitleCmd.CommandText);
+                            Console.ReadKey();
+                        }
+                        sqlConn.Close();
+                        Console.WriteLine("Title deleted");
+                        Console.WriteLine();
+                        break;
+                    case "2":
+                        Console.WriteLine("Title not deleted");
+                        Console.WriteLine();
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Title with ID: {tconst} does not exist");
+                Console.WriteLine("Press any button to go back...");
+                sqlConn.Close();
+                Console.ReadKey();
+            }
         }
     }
 }

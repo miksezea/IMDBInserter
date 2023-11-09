@@ -5,7 +5,7 @@ namespace IMDBConsole.admin.titleActions
     public class TitleExtra
     {
         SqlConnection _sqlConn = new();
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
         public void DBTitleCount(SqlConnection sqlConn)
         {
             _sqlConn = sqlConn;

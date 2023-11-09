@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 namespace IMDBConsole.admin
 {
-    public class GlobalFunctions
+    public class AdminFunctions
     {
         public void CountTable(string table, SqlConnection sqlConn)
         {

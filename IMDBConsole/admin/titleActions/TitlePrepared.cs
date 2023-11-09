@@ -5,7 +5,7 @@ namespace IMDBConsole.admin.titleActions
 {
     public class TitlePrepared : IInserter<Title>, IInserter<Genre>, IInserter<TitleGenre>
     {
-        private readonly GlobalFunctions f = new();
+        private readonly AdminFunctions f = new();
 
         public void InsertData(SqlConnection sqlConn, List<Title> titles)
         {

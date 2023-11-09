@@ -10,7 +10,7 @@ namespace IMDBConsole.admin.crewActions
         int _lineAmount = 0;
         string _path = "";
         SqlConnection sqlConn = new();
-        readonly GlobalFunctions f = new();
+        readonly AdminFunctions f = new();
 
         public void InsertCrewData(string connString, int inserterType, string path, int lineAmount)
         {
