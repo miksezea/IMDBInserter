@@ -18,7 +18,7 @@ namespace IMDBConsole
 
             string? input = Console.ReadLine();
 
-            UserActionsProcessor ap = new();
+            ActionsProcessor ap = new();
 
             switch (input)
             {
@@ -56,7 +56,6 @@ namespace IMDBConsole
                     UserMenu();
                     break;
             }
-            UserMenu();
         }
     }
 }

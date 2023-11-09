@@ -5,8 +5,6 @@ namespace IMDBConsole.admin.crewActions
 {
     public class CrewNormal : IInserter<Director>, IInserter<Writer>
     {
-        readonly GlobalFunctions f = new();
-
         public void InsertData(SqlConnection sqlConn, List<Director> directors)
         {
             foreach (Director director in directors)

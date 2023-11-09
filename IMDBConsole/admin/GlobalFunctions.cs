@@ -22,8 +22,8 @@ namespace IMDBConsole.admin
         }
         public int GetMaxId(string tableID, string tableName, SqlConnection sqlConn)
         {
-            SqlCommand maxCmd = new($"SELECT MAX({tableID}) FROM [dbo].[{tableName}]", sqlConn);
-            object result = maxCmd.ExecuteScalar();
+            SqlCommand cmd = new($"SELECT MAX({tableID}) FROM [dbo].[{tableName}]", sqlConn);
+            object result = cmd.ExecuteScalar();
 
             if (result != null && result != DBNull.Value)
             {
@@ -37,8 +37,8 @@ namespace IMDBConsole.admin
         }
         public int GetID(string tableID, string tableName, string columnName, string name, SqlConnection sqlConn)
         {
-            SqlCommand sqlCmd = new($"SELECT [{tableID}] FROM [dbo].[{tableName}] WHERE [{columnName}] = '{name}'", sqlConn);
-            object result = sqlCmd.ExecuteScalar();
+            SqlCommand cmd = new($"SELECT [{tableID}] FROM [dbo].[{tableName}] WHERE [{columnName}] = '{name}'", sqlConn);
+            object result = cmd.ExecuteScalar();
 
             if (result != null && result != DBNull.Value)
             {
@@ -50,10 +50,12 @@ namespace IMDBConsole.admin
                 return -1;
             }
         }
+
+        // Could change to list<string> instead of void 
         public void TconstFromDBToList(List<string> tconstList, SqlConnection sqlConn)
         {
-            SqlCommand sqlCmd = new($"SELECT [tconst] FROM [dbo].[Titles]", sqlConn);
-            SqlDataReader reader = sqlCmd.ExecuteReader();
+            SqlCommand cmd = new($"SELECT [tconst] FROM [dbo].[Titles]", sqlConn);
+            SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
@@ -62,10 +64,12 @@ namespace IMDBConsole.admin
             }
             reader.Close();
         }
+
+        // Could change to list<string> instead of void 
         public void NconstFromDBToList(List<string> nconstList, SqlConnection sqlConn)
         {
-            SqlCommand sqlCmd = new($"SELECT [nconst] FROM [dbo].[Names]", sqlConn);
-            SqlDataReader reader = sqlCmd.ExecuteReader();
+            SqlCommand cmd = new($"SELECT [nconst] FROM [dbo].[Names]", sqlConn);
+            SqlDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {

@@ -68,35 +68,32 @@ namespace IMDBConsole.admin.crewActions
             {
                 string[] values = line.Split("\t");
 
-                if (values.Length == 3)
+                if (values.Length == 3 && tconsts.Contains(values[0]))
                 {
-                    if (tconsts.Contains(values[0]))
+                    // Directors table
+                    if (values[1] != @"\N")
                     {
-                        // Directors table
-                        if (values[1] != @"\N")
-                        {
-                            string[] directors = values[1].Split(",");
+                        string[] directorsArray = values[1].Split(",");
 
-                            foreach (string director in directors)
+                        foreach (string director in directorsArray)
+                        {
+                            if (nconsts.Contains(director))
                             {
-                                if (nconsts.Contains(director))
-                                {
-                                    this.directors.Add(new Director(director, values[0]));
-                                }
+                                this.directors.Add(new Director(director, values[0]));
                             }
                         }
+                    }
 
-                        // Writers table
-                        if (values[2] != @"\N")
+                    // Writers table
+                    if (values[2] != @"\N")
+                    {
+                        string[] writersArray = values[2].Split(",");
+
+                        foreach (string writer in writersArray)
                         {
-                            string[] writers = values[2].Split(",");
-
-                            foreach (string writer in writers)
+                            if (nconsts.Contains(writer))
                             {
-                                if (nconsts.Contains(writer))
-                                {
-                                    this.writers.Add(new Writer(writer, values[0]));
-                                }
+                                this.writers.Add(new Writer(writer, values[0]));
                             }
                         }
                     }

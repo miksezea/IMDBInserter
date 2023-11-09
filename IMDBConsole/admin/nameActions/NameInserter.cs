@@ -117,9 +117,9 @@ namespace IMDBConsole.admin.nameActions
                     // KnownForTitles table
                     if (values[5] != @"\N")
                     {
-                        string[] knownForTitles = values[5].Split(",");
+                        string[] knownForTitlesArray = values[5].Split(",");
 
-                        foreach (string knownForTitle in knownForTitles)
+                        foreach (string knownForTitle in knownForTitlesArray)
                         {
                             if (tconsts.Contains(knownForTitle))
                             {
