@@ -1,5 +1,6 @@
 ﻿using IMDBLib.titleCrew;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace IMDBConsole.admin.crewActions
 {
@@ -74,28 +75,18 @@ namespace IMDBConsole.admin.crewActions
                     if (values[1] != @"\N")
                     {
                         string[] directorsArray = values[1].Split(",");
-
-                        foreach (string director in directorsArray)
-                        {
-                            if (nconsts.Contains(director))
-                            {
-                                this.directors.Add(new Director(director, values[0]));
-                            }
-                        }
+                        this.directors.AddRange(from string director in directorsArray
+                                                where nconsts.Contains(director)
+                                                select new Director(director, values[0]));
                     }
 
                     // Writers table
                     if (values[2] != @"\N")
                     {
                         string[] writersArray = values[2].Split(",");
-
-                        foreach (string writer in writersArray)
-                        {
-                            if (nconsts.Contains(writer))
-                            {
-                                this.writers.Add(new Writer(writer, values[0]));
-                            }
-                        }
+                        this.writers.AddRange(from string writer in writersArray
+                                              where nconsts.Contains(writer)
+                                              select new Writer(writer, values[0]));
                     }
                 }
             }

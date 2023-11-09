@@ -270,10 +270,7 @@ namespace IMDBConsole.user
                     }
                     reader.Close();
 
-                    if (tconstFound == null)
-                    {
-                        tconstFound = "tt0000000";
-                    }
+                    tconstFound ??= "tt0000000";
 
                     string tconstNumber = tconstFound[2..];
 
@@ -358,7 +355,7 @@ namespace IMDBConsole.user
             Console.WriteLine($"Name: {primaryName}");
             Console.WriteLine();
 
-            int? birthYear = null;
+            int? birthYear;
             while (true)
             {
                 birthYear = anv.BirthYear();
@@ -453,10 +450,7 @@ namespace IMDBConsole.user
                     }
                     reader.Close();
 
-                    if (nconstFound == null)
-                    {
-                        nconstFound = "nm0000000";
-                    }
+                    nconstFound ??= "nm0000000";
 
                     string nconstNumber = nconstFound[2..];
 
